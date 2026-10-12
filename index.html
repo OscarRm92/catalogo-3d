@@ -15,8 +15,8 @@
 
   /* ---------- Portada ---------- */
   .cover {
-    width: 210mm;
-    height: 297mm;
+    width: 100%;
+    min-height: 70vh;
     background: linear-gradient(160deg, #1b1023 0%, #3a1a0f 55%, #ff7a1a 130%);
     color: #fff5e6;
     display: flex;
@@ -27,6 +27,8 @@
     page-break-after: always;
     position: relative;
     overflow: hidden;
+    padding: 40px 20px;
+    box-sizing: border-box;
   }
   .cover .glow {
     position: absolute;
@@ -35,13 +37,13 @@
     top: -100px; right: -120px;
   }
   .cover h1 {
-    font-size: 46px;
+    font-size: 48px;
     margin: 0 0 6px 0;
     letter-spacing: 1px;
   }
   .cover h2 {
     font-weight: 400;
-    font-size: 20px;
+    font-size: 22px;
     color: #ffb877;
     margin: 0 0 40px 0;
     letter-spacing: 3px;
@@ -52,8 +54,8 @@
     margin-bottom: 20px;
   }
   .cover .tagline {
-    max-width: 420px;
-    font-size: 15px;
+    max-width: 520px;
+    font-size: 17px;
     line-height: 1.6;
     color: #f0ddc9;
   }
@@ -67,35 +69,36 @@
 
   /* ---------- Páginas de catálogo ---------- */
   .page {
-    width: 210mm;
-    min-height: 297mm;
-    padding: 14mm 12mm;
-    page-break-after: always;
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    padding: 30px 28px;
   }
   .page-header {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
     border-bottom: 2px solid #ff7a1a;
-    padding-bottom: 6px;
-    margin-bottom: 10mm;
+    padding-bottom: 8px;
+    margin-bottom: 24px;
   }
   .page-header h3 {
     margin: 0;
-    font-size: 15px;
+    font-size: 17px;
     color: #ff7a1a;
     letter-spacing: 2px;
     text-transform: uppercase;
   }
   .page-header span {
-    font-size: 11px;
+    font-size: 13px;
     color: #998;
   }
 
   .grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10mm 8mm;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 26px;
   }
 
   .card {
@@ -107,7 +110,7 @@
   }
   .card .img-wrap {
     width: 100%;
-    height: 58mm;
+    height: 260px;
     background: #15101a;
     display: flex;
     align-items: center;
@@ -120,44 +123,69 @@
     object-fit: contain;
   }
   .card .info {
-    padding: 4mm 5mm 5mm 5mm;
+    padding: 14px 16px 16px 16px;
   }
   .card .info h4 {
-    margin: 0 0 3px 0;
-    font-size: 13.5px;
+    margin: 0 0 5px 0;
+    font-size: 15.5px;
     color: #2b1b12;
   }
   .card .info .tag {
     display: inline-block;
-    font-size: 8.5px;
+    font-size: 10.5px;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     color: #ff7a1a;
     background: #fff0e0;
     border-radius: 4px;
-    padding: 1.5px 6px;
-    margin-bottom: 5px;
+    padding: 2px 7px;
+    margin-bottom: 7px;
   }
   .card .info p {
     margin: 0;
-    font-size: 10.5px;
-    line-height: 1.5;
+    font-size: 12.5px;
+    line-height: 1.55;
     color: #5a4c40;
   }
   .card .info .price {
-    margin-top: 5px;
-    font-size: 10px;
+    margin-top: 7px;
+    font-size: 12px;
     color: #998;
   }
 
   .note-box {
-    margin-top: 10mm;
-    padding: 4mm 5mm;
+    margin-top: 30px;
+    padding: 12px 16px;
     background: #fff0e0;
     border-left: 3px solid #ff7a1a;
-    font-size: 10px;
+    font-size: 12px;
     color: #6b5440;
     border-radius: 4px;
+  }
+
+  /* ---------- Impresión: layout fijo tipo A4 ---------- */
+  @media print {
+    .cover {
+      width: 210mm;
+      height: 297mm;
+      min-height: 0;
+      padding: 0;
+    }
+    .page {
+      width: 210mm;
+      max-width: none;
+      min-height: 297mm;
+      margin: 0;
+      padding: 14mm 12mm;
+      page-break-after: always;
+    }
+    .page-header { margin-bottom: 10mm; }
+    .grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 10mm 8mm;
+    }
+    .card .img-wrap { height: 58mm; }
+    .note-box { margin-top: 10mm; }
   }
 
   /* ---------- Barra de administrador ---------- */
@@ -168,7 +196,7 @@
     background: #1b1023;
     color: #fff5e6;
     font-family: 'Segoe UI', Arial, sans-serif;
-    font-size: 13px;
+    font-size: 15px;
     padding: 8px 16px;
     display: flex;
     align-items: center;
@@ -185,7 +213,7 @@
     border: 1px solid #5a4c40;
     background: #2b1b12;
     color: #fff5e6;
-    font-size: 12px;
+    font-size: 14px;
     width: 110px;
   }
   #admin-bar button {
@@ -195,7 +223,7 @@
     background: #ff7a1a;
     color: #1b1023;
     font-weight: 600;
-    font-size: 12px;
+    font-size: 14px;
     cursor: pointer;
   }
   #admin-bar button.secondary {
@@ -205,7 +233,7 @@
   }
   #admin-bar .login-error {
     color: #ff8080;
-    font-size: 11.5px;
+    font-size: 13.5px;
   }
   #login-form { display: flex; align-items: center; gap: 6px; }
   #logged-in-controls { display: none; align-items: center; gap: 8px; }
@@ -284,11 +312,11 @@
   .modal-box h3 {
     margin: 0 0 14px 0;
     color: #ffb877;
-    font-size: 17px;
+    font-size: 19px;
   }
   .modal-box label {
     display: block;
-    font-size: 12px;
+    font-size: 14px;
     color: #f0ddc9;
     margin-bottom: 12px;
   }
@@ -304,7 +332,7 @@
     border: 1px solid #5a4c40;
     background: #2b1b12;
     color: #fff5e6;
-    font-size: 13px;
+    font-size: 15px;
     font-family: inherit;
     box-sizing: border-box;
   }
@@ -322,7 +350,7 @@
     background: #ff7a1a;
     color: #1b1023;
     font-weight: 600;
-    font-size: 12.5px;
+    font-size: 14.5px;
     cursor: pointer;
   }
   .modal-box button.secondary {
@@ -332,15 +360,34 @@
   }
   .modal-error {
     color: #ff8080;
-    font-size: 11.5px;
+    font-size: 13.5px;
     margin-top: -6px;
     margin-bottom: 10px;
+  }
+
+  /* ---------- Botón eliminar (solo admin) ---------- */
+  .card .delete-btn {
+    display: none;
+    margin-top: 10px;
+    padding: 5px 11px;
+    border-radius: 5px;
+    border: 1px solid #c0392b;
+    background: transparent;
+    color: #c0392b;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .card .delete-btn:hover {
+    background: #c0392b;
+    color: #fff;
   }
 
   @media print {
     #admin-bar { display: none !important; }
     [contenteditable] { outline: none !important; background: transparent !important; }
     .modal-overlay, .lightbox-overlay { display: none !important; }
+    .delete-btn { display: none !important; }
   }
 </style>
 </head>
@@ -588,6 +635,7 @@
   (function () {
     var STORAGE_KEY = 'catalogo3d_data_v1';
     var CUSTOM_CARDS_KEY = 'catalogo3d_custom_cards_v1';
+    var HIDDEN_CARDS_KEY = 'catalogo3d_hidden_cards_v1';
     var SESSION_KEY = 'catalogo3d_admin_session';
     var ADMIN_USER = 'Admin';
     var ADMIN_PASS = '4dm1n';
@@ -606,6 +654,44 @@
     }
     function saveCustomCards(list) {
       localStorage.setItem(CUSTOM_CARDS_KEY, JSON.stringify(list));
+    }
+    function loadHidden() {
+      try { return JSON.parse(localStorage.getItem(HIDDEN_CARDS_KEY)) || []; }
+      catch (e) { return []; }
+    }
+    function saveHidden(list) {
+      localStorage.setItem(HIDDEN_CARDS_KEY, JSON.stringify(list));
+    }
+    function applyHiddenCards() {
+      loadHidden().forEach(function (id) {
+        var card = document.querySelector('.card[data-id="' + id + '"]');
+        if (card) card.remove();
+      });
+    }
+    function ensureDeleteButtons() {
+      Array.prototype.forEach.call(document.querySelectorAll('.card'), function (card) {
+        if (card.querySelector('.delete-btn')) return;
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'delete-btn';
+        btn.textContent = 'Eliminar pieza';
+        btn.addEventListener('click', function () {
+          if (!confirm('¿Eliminar esta pieza del catálogo? Esta acción no se puede deshacer.')) return;
+          var id = card.dataset.id;
+          card.remove();
+
+          var hidden = loadHidden();
+          if (hidden.indexOf(id) === -1) {
+            hidden.push(id);
+            saveHidden(hidden);
+          }
+          var data = loadData();
+          delete data[id];
+          saveData(data);
+          saveCustomCards(loadCustomCards().filter(function (c) { return c.id !== id; }));
+        });
+        card.querySelector('.info').appendChild(btn);
+      });
     }
     function getCards() {
       return Array.prototype.map.call(document.querySelectorAll('.card'), function (card) {
@@ -635,6 +721,9 @@
       getCards().forEach(function (c) {
         c.desc.contentEditable = on ? 'true' : 'false';
         c.price.contentEditable = on ? 'true' : 'false';
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('.delete-btn'), function (btn) {
+        btn.style.display = on ? 'inline-block' : 'none';
       });
     }
     function isLoggedIn() {
@@ -783,6 +872,7 @@
         if (!targetGrid) targetGrid = document.querySelector('.page .grid');
         var cardEl = buildCardElement(data);
         targetGrid.appendChild(cardEl);
+        ensureDeleteButtons();
         setEditable(isLoggedIn());
 
         var list = loadCustomCards();
@@ -848,6 +938,9 @@
       if (clonedLightbox) clonedLightbox.classList.remove('open');
       var clonedLightboxImg = docClone.querySelector('#lightbox-img');
       if (clonedLightboxImg) clonedLightboxImg.removeAttribute('src');
+      Array.prototype.forEach.call(docClone.querySelectorAll('.delete-btn'), function (btn) {
+        btn.style.display = 'none';
+      });
 
       var htmlStr = '<!DOCTYPE html>\n' + docClone.outerHTML;
       var blob = new Blob([htmlStr], { type: 'text/html' });
@@ -867,6 +960,8 @@
     });
 
     injectCustomCards();
+    applyHiddenCards();
+    ensureDeleteButtons();
     applyStoredData();
     refreshUI();
   })();
