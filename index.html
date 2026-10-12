@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Catálogo de Impresiones 3D</title>
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #2b1b12;
+    background: #fff;
+  }
+
+  /* ---------- Portada ---------- */
+  .cover {
+    width: 210mm;
+    height: 297mm;
+    background: linear-gradient(160deg, #1b1023 0%, #3a1a0f 55%, #ff7a1a 130%);
+    color: #fff5e6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    page-break-after: always;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover .glow {
+    position: absolute;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(255,140,0,0.35) 0%, rgba(255,140,0,0) 70%);
+    top: -100px; right: -120px;
+  }
+  .cover h1 {
+    font-size: 46px;
+    margin: 0 0 6px 0;
+    letter-spacing: 1px;
+  }
+  .cover h2 {
+    font-weight: 400;
+    font-size: 20px;
+    color: #ffb877;
+    margin: 0 0 40px 0;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .cover .ghost {
+    font-size: 110px;
+    margin-bottom: 20px;
+  }
+  .cover .tagline {
+    max-width: 420px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #f0ddc9;
+  }
+  .cover .footer-note {
+    position: absolute;
+    bottom: 30px;
+    font-size: 11px;
+    color: #c9a583;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- Páginas de catálogo ---------- */
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 14mm 12mm;
+    page-break-after: always;
+  }
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 2px solid #ff7a1a;
+    padding-bottom: 6px;
+    margin-bottom: 10mm;
+  }
+  .page-header h3 {
+    margin: 0;
+    font-size: 15px;
+    color: #ff7a1a;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .page-header span {
+    font-size: 11px;
+    color: #998;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10mm 8mm;
+  }
+
+  .card {
+    border: 1px solid #e8dcd0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fffaf4;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .card .img-wrap {
+    width: 100%;
+    height: 58mm;
+    background: #15101a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .card .img-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  .card .info {
+    padding: 4mm 5mm 5mm 5mm;
+  }
+  .card .info h4 {
+    margin: 0 0 3px 0;
+    font-size: 13.5px;
+    color: #2b1b12;
+  }
+  .card .info .tag {
+    display: inline-block;
+    font-size: 8.5px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #ff7a1a;
+    background: #fff0e0;
+    border-radius: 4px;
+    padding: 1.5px 6px;
+    margin-bottom: 5px;
+  }
+  .card .info p {
+    margin: 0;
+    font-size: 10.5px;
+    line-height: 1.5;
+    color: #5a4c40;
+  }
+  .card .info .price {
+    margin-top: 5px;
+    font-size: 10px;
+    color: #998;
+  }
+
+  .note-box {
+    margin-top: 10mm;
+    padding: 4mm 5mm;
+    background: #fff0e0;
+    border-left: 3px solid #ff7a1a;
+    font-size: 10px;
+    color: #6b5440;
+    border-radius: 4px;
+  }
+
+  /* ---------- Barra de administrador ---------- */
+  #admin-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #1b1023;
+    color: #fff5e6;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    font-size: 13px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  #admin-bar strong { color: #ffb877; }
+  #admin-bar .admin-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  #admin-bar input[type="text"],
+  #admin-bar input[type="password"] {
+    padding: 5px 8px;
+    border-radius: 4px;
+    border: 1px solid #5a4c40;
+    background: #2b1b12;
+    color: #fff5e6;
+    font-size: 12px;
+    width: 110px;
+  }
+  #admin-bar button {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: none;
+    background: #ff7a1a;
+    color: #1b1023;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  #admin-bar button.secondary {
+    background: transparent;
+    color: #fff5e6;
+    border: 1px solid #5a4c40;
+  }
+  #admin-bar .login-error {
+    color: #ff8080;
+    font-size: 11.5px;
+  }
+  #login-form { display: flex; align-items: center; gap: 6px; }
+  #logged-in-controls { display: none; align-items: center; gap: 8px; }
+  #admin-bar.logged-in #login-form { display: none; }
+  #admin-bar.logged-in #logged-in-controls { display: flex; }
+
+  [contenteditable="true"] {
+    outline: 1.5px dashed #ff7a1a;
+    outline-offset: 2px;
+    background: #fffdf5;
+    cursor: text;
+    border-radius: 3px;
+  }
+
+  @media print {
+    #admin-bar { display: none !important; }
+    [contenteditable] { outline: none !important; background: transparent !important; }
+  }
+</style>
+</head>
+<body>
+
+  <div id="admin-bar">
+    <div><strong>Panel de edición</strong> — precios y descripciones del catálogo</div>
+    <div class="admin-right">
+      <form id="login-form">
+        <input type="text" id="admin-user" placeholder="Usuario" autocomplete="off">
+        <input type="password" id="admin-pass" placeholder="Contraseña" autocomplete="off">
+        <button type="submit">Entrar</button>
+        <span class="login-error" id="login-error"></span>
+      </form>
+      <div id="logged-in-controls">
+        <span>Modo edición activo — haz clic en un precio o descripción para editarlo</span>
+        <button id="btn-save" type="button">Guardar cambios</button>
+        <button id="btn-export" type="button">Descargar HTML actualizado</button>
+        <button id="btn-logout" type="button" class="secondary">Cerrar sesión</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- PORTADA -->
+  <div class="cover">
+    <div class="glow"></div>
+    <div class="ghost">👻</div>
+    <h1>Catálogo de Impresiones 3D</h1>
+    <h2>Colección Halloween</h2>
+    <p class="tagline">
+      Figuras y piezas decorativas impresas en 3D, diseñadas para esta
+      temporada de Halloween. Vista previa de catálogo para revisión
+      interna antes de su publicación en la página web.
+    </p>
+    <div class="footer-note">DOCUMENTO DE TRABAJO · NO FINAL</div>
+  </div>
+
+  <!-- PÁGINA 1 -->
+  <div class="page">
+    <div class="page-header">
+      <h3>Fantasmas</h3>
+      <span>01 / 03</span>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="img-wrap"><img src="Fantasma_con_corazon.jpeg"></div>
+        <div class="info">
+          <span class="tag">Decorativo</span>
+          <h4>Fantasma con Corazón</h4>
+          <p>Pequeño fantasma blanco sosteniendo un corazón rojo entre sus manos. Pieza tierna, ideal como detalle de regalo o decoración de escritorio.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="Fantasma_con_gato.jpeg"></div>
+        <div class="info">
+          <span class="tag">Decorativo</span>
+          <h4>Fantasma con Gato Negro</h4>
+          <p>Fantasma blanco abrazando a un gato negro, impreso en dos colores. Figura entrañable con un toque clásico de Halloween.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="Fantasma_con_globo.jpeg"></div>
+        <div class="info">
+          <span class="tag">Figura con base</span>
+          <h4>Fantasma Flotante con Globo</h4>
+          <p>Fantasma suspendido en un alambre sobre base circular, sujetando un globo rojo. Diseño inspirado en el payaso Pennywise.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="Fantasma_con_globo_florecente.jpeg"></div>
+        <div class="info">
+          <span class="tag">Filamento fotoluminiscente</span>
+          <h4>Fantasma con Globo (Brilla en la Oscuridad)</h4>
+          <p>La misma figura de fantasma con globo, impresa en filamento fosforescente: carga luz y brilla en verde/azul al apagar la luz.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 2 -->
+  <div class="page">
+    <div class="page-header">
+      <h3>Fantasmas</h3>
+      <span>02 / 03</span>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="img-wrap"><img src="Fantasma_gorro.jpeg"></div>
+        <div class="info">
+          <span class="tag">Decorativo</span>
+          <h4>Fantasma con Gorro de Lana</h4>
+          <p>Fantasma con gorro tejido verde, sosteniendo un libro abierto en una mano y una taza en la otra. Ideal para ambientar otoño/Halloween.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="Fantasma_varios.jpeg"></div>
+        <div class="info">
+          <span class="tag">Set / colección</span>
+          <h4>Set "Fantasmas Relax"</h4>
+          <p>Colección de cinco fantasmas en pose relajada, cada uno con gorro de distinto color y accesorios: audífonos, libro, celular, taza y flotador.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="Fantasmas_con_globos.jpeg"></div>
+        <div class="info">
+          <span class="tag">Set / colores a elegir</span>
+          <h4>Set Fantasmas con Globo de Colores</h4>
+          <p>Cuatro fantasmas montados en base, cada uno con un globo de color distinto (amarillo, magenta, naranja y rosa). Se puede elegir color individual.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="trick_treat.jpeg"></div>
+        <div class="info">
+          <span class="tag">Figura de colección</span>
+          <h4>Sam (Trick 'r Treat)</h4>
+          <p>Figura estilo chibi de Sam, el icónico personaje de la película "Trick 'r Treat", con overol naranja y cabeza de costal cosida.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PÁGINA 3 -->
+  <div class="page">
+    <div class="page-header">
+      <h3>Calaveras, calabazas y otros personajes</h3>
+      <span>03 / 03</span>
+    </div>
+    <div class="grid">
+
+      <div class="card">
+        <div class="img-wrap"><img src="MichaelMyers.jpeg"></div>
+        <div class="info">
+          <span class="tag">Figura de colección</span>
+          <h4>Michael Myers</h4>
+          <p>Figura estilo chibi del icónico asesino de la saga "Halloween", con overol azul, máscara blanca y cuchillo en mano.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="Soporte_calabera.jpeg"></div>
+        <div class="info">
+          <span class="tag">Articulado</span>
+          <h4>Calavera Articulada</h4>
+          <p>Esqueleto chibi sentado, con articulaciones móviles en brazos y piernas. Disponible en distintos colores de filamento.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="Soporte_calabera_dorada.jpeg"></div>
+        <div class="info">
+          <span class="tag">Articulado · acabado dorado</span>
+          <h4>Calavera Articulada Dorada</h4>
+          <p>La misma calavera articulada, impresa en filamento dorado metálico para un acabado más elegante y llamativo.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="calabaza_sentada.jpeg"></div>
+        <div class="info">
+          <span class="tag">Articulado</span>
+          <h4>Calabaza Sentada Articulada</h4>
+          <p>Calabaza con cuerpo acanalado y piernas articuladas tipo muñeco, en pose sentada. Tallo verde a modo de detalle final.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="img-wrap"><img src="polloCuchillo.jpeg"></div>
+        <div class="info">
+          <span class="tag">Humor negro</span>
+          <h4>Gallina con Cuchillo</h4>
+          <p>Gallina blanca con un cuchillo atravesado en la cabeza, ojos en forma de "X" y base simulando un charco de sangre. Pieza de humor negro para Halloween.</p>
+          <div class="price">Medidas / precio: a definir</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="note-box">
+      Nota: este catálogo es una vista previa interna para revisar contenido y orden de las piezas
+      antes de construir la página web definitiva. Textos, precios y medidas son editables.
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var STORAGE_KEY = 'catalogo3d_data_v1';
+    var SESSION_KEY = 'catalogo3d_admin_session';
+    var ADMIN_USER = 'Admin';
+    var ADMIN_PASS = '4dm1n';
+
+    function loadData() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
+      catch (e) { return {}; }
+    }
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    function getCards() {
+      return Array.prototype.map.call(document.querySelectorAll('.card'), function (card) {
+        var img = card.querySelector('img');
+        var id = img.getAttribute('src').replace(/\.[^/.]+$/, '');
+        return {
+          id: id,
+          desc: card.querySelector('.info p'),
+          price: card.querySelector('.info .price')
+        };
+      });
+    }
+    function applyStoredData() {
+      var data = loadData();
+      getCards().forEach(function (c) {
+        var entry = data[c.id];
+        if (entry) {
+          if (entry.desc) c.desc.textContent = entry.desc;
+          if (entry.price) c.price.textContent = entry.price;
+        }
+      });
+    }
+    function setEditable(on) {
+      getCards().forEach(function (c) {
+        c.desc.contentEditable = on ? 'true' : 'false';
+        c.price.contentEditable = on ? 'true' : 'false';
+      });
+    }
+    function isLoggedIn() {
+      return sessionStorage.getItem(SESSION_KEY) === '1';
+    }
+    function refreshUI() {
+      var bar = document.getElementById('admin-bar');
+      var loggedIn = isLoggedIn();
+      bar.classList.toggle('logged-in', loggedIn);
+      setEditable(loggedIn);
+    }
+
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var user = document.getElementById('admin-user').value.trim();
+      var pass = document.getElementById('admin-pass').value;
+      var errorEl = document.getElementById('login-error');
+      if (user === ADMIN_USER && pass === ADMIN_PASS) {
+        sessionStorage.setItem(SESSION_KEY, '1');
+        errorEl.textContent = '';
+        document.getElementById('admin-user').value = '';
+        document.getElementById('admin-pass').value = '';
+        refreshUI();
+      } else {
+        errorEl.textContent = 'Usuario o contraseña incorrectos';
+      }
+    });
+
+    document.getElementById('btn-logout').addEventListener('click', function () {
+      sessionStorage.removeItem(SESSION_KEY);
+      refreshUI();
+    });
+
+    document.getElementById('btn-save').addEventListener('click', function () {
+      var data = loadData();
+      getCards().forEach(function (c) {
+        data[c.id] = {
+          desc: c.desc.textContent.trim(),
+          price: c.price.textContent.trim()
+        };
+      });
+      saveData(data);
+      var btn = document.getElementById('btn-save');
+      var original = btn.textContent;
+      btn.textContent = 'Cambios guardados ✓';
+      setTimeout(function () { btn.textContent = original; }, 1500);
+    });
+
+    document.getElementById('btn-export').addEventListener('click', function () {
+      var docClone = document.documentElement.cloneNode(true);
+      Array.prototype.forEach.call(docClone.querySelectorAll('[contenteditable]'), function (el) {
+        el.removeAttribute('contenteditable');
+      });
+      var clonedBar = docClone.querySelector('#admin-bar');
+      if (clonedBar) clonedBar.classList.remove('logged-in');
+      var clonedError = docClone.querySelector('#login-error');
+      if (clonedError) clonedError.textContent = '';
+
+      var htmlStr = '<!DOCTYPE html>\n' + docClone.outerHTML;
+      var blob = new Blob([htmlStr], { type: 'text/html' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'index.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      var btn = document.getElementById('btn-export');
+      var original = btn.textContent;
+      btn.textContent = 'Archivo descargado ✓';
+      setTimeout(function () { btn.textContent = original; }, 2000);
+    });
+
+    applyStoredData();
+    refreshUI();
+  })();
+  </script>
+
+</body>
+</html>
