@@ -220,9 +220,127 @@
     border-radius: 3px;
   }
 
+  /* ---------- Imagen ampliable ---------- */
+  .card .img-wrap img { cursor: zoom-in; }
+
+  .lightbox-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 300;
+    background: rgba(10, 6, 12, 0.92);
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+  }
+  .lightbox-overlay.open { display: flex; }
+  .lightbox-overlay img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 6px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  .lightbox-close {
+    position: absolute;
+    top: 18px;
+    right: 24px;
+    background: #ff7a1a;
+    color: #1b1023;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  /* ---------- Modal "agregar pieza" ---------- */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(10, 6, 12, 0.75);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: #1b1023;
+    color: #fff5e6;
+    width: 100%;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  .modal-box h3 {
+    margin: 0 0 14px 0;
+    color: #ffb877;
+    font-size: 17px;
+  }
+  .modal-box label {
+    display: block;
+    font-size: 12px;
+    color: #f0ddc9;
+    margin-bottom: 12px;
+  }
+  .modal-box input[type="text"],
+  .modal-box input[type="file"],
+  .modal-box textarea,
+  .modal-box select {
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    padding: 7px 9px;
+    border-radius: 5px;
+    border: 1px solid #5a4c40;
+    background: #2b1b12;
+    color: #fff5e6;
+    font-size: 13px;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+  .modal-box textarea { min-height: 70px; resize: vertical; }
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .modal-box button {
+    padding: 7px 14px;
+    border-radius: 5px;
+    border: none;
+    background: #ff7a1a;
+    color: #1b1023;
+    font-weight: 600;
+    font-size: 12.5px;
+    cursor: pointer;
+  }
+  .modal-box button.secondary {
+    background: transparent;
+    color: #fff5e6;
+    border: 1px solid #5a4c40;
+  }
+  .modal-error {
+    color: #ff8080;
+    font-size: 11.5px;
+    margin-top: -6px;
+    margin-bottom: 10px;
+  }
+
   @media print {
     #admin-bar { display: none !important; }
     [contenteditable] { outline: none !important; background: transparent !important; }
+    .modal-overlay, .lightbox-overlay { display: none !important; }
   }
 </style>
 </head>
@@ -239,11 +357,48 @@
       </form>
       <div id="logged-in-controls">
         <span>Modo edición activo — haz clic en un precio o descripción para editarlo</span>
+        <button id="btn-add-card" type="button">+ Agregar pieza</button>
         <button id="btn-save" type="button">Guardar cambios</button>
         <button id="btn-export" type="button">Descargar HTML actualizado</button>
         <button id="btn-logout" type="button" class="secondary">Cerrar sesión</button>
       </div>
     </div>
+  </div>
+
+  <div id="add-modal-overlay" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Agregar nueva pieza</h3>
+      <form id="add-card-form">
+        <label>Imagen
+          <input type="file" id="new-img" accept="image/*" required>
+        </label>
+        <label>Nombre
+          <input type="text" id="new-title" required placeholder="Ej. Fantasma con escoba">
+        </label>
+        <label>Etiqueta / categoría
+          <input type="text" id="new-tag" placeholder="Ej. Decorativo">
+        </label>
+        <label>Descripción
+          <textarea id="new-desc" required placeholder="Breve descripción de lo que se ve en la pieza..."></textarea>
+        </label>
+        <label>Precio / medidas
+          <input type="text" id="new-price" placeholder="Medidas / precio: a definir">
+        </label>
+        <label>Sección del catálogo
+          <select id="new-section"></select>
+        </label>
+        <div class="modal-error" id="add-modal-error"></div>
+        <div class="modal-actions">
+          <button type="button" id="btn-cancel-add" class="secondary">Cancelar</button>
+          <button type="submit">Agregar al catálogo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="lightbox-overlay" class="lightbox-overlay">
+    <button id="lightbox-close" class="lightbox-close" type="button">&times;</button>
+    <img id="lightbox-img" src="" alt="">
   </div>
 
 
@@ -262,14 +417,14 @@
   </div>
 
   <!-- PÁGINA 1 -->
-  <div class="page">
+  <div class="page" data-section-label="Página 1 · Fantasmas">
     <div class="page-header">
       <h3>Fantasmas</h3>
       <span>01 / 03</span>
     </div>
     <div class="grid">
 
-      <div class="card">
+      <div class="card" data-id="fantasma-con-corazon">
         <div class="img-wrap"><img src="Fantasma_con_corazon.jpeg"></div>
         <div class="info">
           <span class="tag">Decorativo</span>
@@ -279,7 +434,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="fantasma-con-gato">
         <div class="img-wrap"><img src="Fantasma_con_gato.jpeg"></div>
         <div class="info">
           <span class="tag">Decorativo</span>
@@ -289,7 +444,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="fantasma-con-globo">
         <div class="img-wrap"><img src="Fantasma_con_globo.jpeg"></div>
         <div class="info">
           <span class="tag">Figura con base</span>
@@ -299,7 +454,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="fantasma-con-globo-florecente">
         <div class="img-wrap"><img src="Fantasma_con_globo_florecente.jpeg"></div>
         <div class="info">
           <span class="tag">Filamento fotoluminiscente</span>
@@ -313,14 +468,14 @@
   </div>
 
   <!-- PÁGINA 2 -->
-  <div class="page">
+  <div class="page" data-section-label="Página 2 · Fantasmas">
     <div class="page-header">
       <h3>Fantasmas</h3>
       <span>02 / 03</span>
     </div>
     <div class="grid">
 
-      <div class="card">
+      <div class="card" data-id="fantasma-gorro">
         <div class="img-wrap"><img src="Fantasma_gorro.jpeg"></div>
         <div class="info">
           <span class="tag">Decorativo</span>
@@ -330,7 +485,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="fantasma-varios">
         <div class="img-wrap"><img src="Fantasma_varios.jpeg"></div>
         <div class="info">
           <span class="tag">Set / colección</span>
@@ -340,7 +495,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="fantasmas-con-globos">
         <div class="img-wrap"><img src="Fantasmas_con_globos.jpeg"></div>
         <div class="info">
           <span class="tag">Set / colores a elegir</span>
@@ -350,7 +505,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="trick-treat">
         <div class="img-wrap"><img src="trick_treat.jpeg"></div>
         <div class="info">
           <span class="tag">Figura de colección</span>
@@ -364,14 +519,14 @@
   </div>
 
   <!-- PÁGINA 3 -->
-  <div class="page">
+  <div class="page" data-section-label="Página 3 · Calaveras, calabazas y otros">
     <div class="page-header">
       <h3>Calaveras, calabazas y otros personajes</h3>
       <span>03 / 03</span>
     </div>
     <div class="grid">
 
-      <div class="card">
+      <div class="card" data-id="michaelmyers">
         <div class="img-wrap"><img src="MichaelMyers.jpeg"></div>
         <div class="info">
           <span class="tag">Figura de colección</span>
@@ -381,7 +536,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="soporte-calabera">
         <div class="img-wrap"><img src="Soporte_calabera.jpeg"></div>
         <div class="info">
           <span class="tag">Articulado</span>
@@ -391,7 +546,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="soporte-calabera-dorada">
         <div class="img-wrap"><img src="Soporte_calabera_dorada.jpeg"></div>
         <div class="info">
           <span class="tag">Articulado · acabado dorado</span>
@@ -401,7 +556,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="calabaza-sentada">
         <div class="img-wrap"><img src="calabaza_sentada.jpeg"></div>
         <div class="info">
           <span class="tag">Articulado</span>
@@ -411,7 +566,7 @@
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" data-id="pollocuchillo">
         <div class="img-wrap"><img src="polloCuchillo.jpeg"></div>
         <div class="info">
           <span class="tag">Humor negro</span>
@@ -432,9 +587,11 @@
   <script>
   (function () {
     var STORAGE_KEY = 'catalogo3d_data_v1';
+    var CUSTOM_CARDS_KEY = 'catalogo3d_custom_cards_v1';
     var SESSION_KEY = 'catalogo3d_admin_session';
     var ADMIN_USER = 'Admin';
     var ADMIN_PASS = '4dm1n';
+    var MAX_IMG_DIM = 900;
 
     function loadData() {
       try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
@@ -443,10 +600,20 @@
     function saveData(data) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
+    function loadCustomCards() {
+      try { return JSON.parse(localStorage.getItem(CUSTOM_CARDS_KEY)) || []; }
+      catch (e) { return []; }
+    }
+    function saveCustomCards(list) {
+      localStorage.setItem(CUSTOM_CARDS_KEY, JSON.stringify(list));
+    }
     function getCards() {
       return Array.prototype.map.call(document.querySelectorAll('.card'), function (card) {
-        var img = card.querySelector('img');
-        var id = img.getAttribute('src').replace(/\.[^/.]+$/, '');
+        var id = card.dataset.id;
+        if (!id) {
+          var img = card.querySelector('img');
+          id = img.getAttribute('src').replace(/\.[^/.]+$/, '');
+        }
         return {
           id: id,
           desc: card.querySelector('.info p'),
@@ -479,6 +646,154 @@
       bar.classList.toggle('logged-in', loggedIn);
       setEditable(loggedIn);
     }
+
+    function buildCardElement(data) {
+      var card = document.createElement('div');
+      card.className = 'card';
+      card.dataset.id = data.id;
+      card.innerHTML =
+        '<div class="img-wrap"><img src="' + data.img + '" alt=""></div>' +
+        '<div class="info">' +
+          '<span class="tag">' + (data.tag || 'Decorativo') + '</span>' +
+          '<h4>' + data.title + '</h4>' +
+          '<p>' + data.desc + '</p>' +
+          '<div class="price">' + (data.price || 'Medidas / precio: a definir') + '</div>' +
+        '</div>';
+      return card;
+    }
+
+    function injectCustomCards() {
+      loadCustomCards().forEach(function (data) {
+        if (document.querySelector('.card[data-id="' + data.id + '"]')) return;
+        var pages = document.querySelectorAll('.page');
+        var targetGrid = null;
+        for (var i = 0; i < pages.length; i++) {
+          if (pages[i].dataset.sectionLabel === data.section) {
+            targetGrid = pages[i].querySelector('.grid');
+            break;
+          }
+        }
+        if (!targetGrid) targetGrid = document.querySelector('.page .grid');
+        targetGrid.appendChild(buildCardElement(data));
+      });
+    }
+
+    function populateSectionSelect() {
+      var select = document.getElementById('new-section');
+      select.innerHTML = '';
+      Array.prototype.forEach.call(document.querySelectorAll('.page[data-section-label]'), function (page) {
+        var opt = document.createElement('option');
+        opt.value = page.dataset.sectionLabel;
+        opt.textContent = page.dataset.sectionLabel;
+        select.appendChild(opt);
+      });
+    }
+
+    function resizeImage(file, maxDim, quality) {
+      return new Promise(function (resolve, reject) {
+        var reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = function () {
+          var img = new Image();
+          img.onerror = reject;
+          img.onload = function () {
+            var w = img.width, h = img.height;
+            if (w > maxDim || h > maxDim) {
+              if (w >= h) { h = Math.round(h * maxDim / w); w = maxDim; }
+              else { w = Math.round(w * maxDim / h); h = maxDim; }
+            }
+            var canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function openModal() {
+      document.getElementById('add-modal-error').textContent = '';
+      document.getElementById('add-card-form').reset();
+      populateSectionSelect();
+      document.getElementById('add-modal-overlay').classList.add('open');
+    }
+    function closeModal() {
+      document.getElementById('add-modal-overlay').classList.remove('open');
+    }
+
+    function openLightbox(src) {
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox-overlay').classList.add('open');
+    }
+    function closeLightbox() {
+      document.getElementById('lightbox-overlay').classList.remove('open');
+      document.getElementById('lightbox-img').src = '';
+    }
+
+    document.addEventListener('click', function (e) {
+      if (e.target.closest('.card .img-wrap img')) {
+        openLightbox(e.target.src);
+      }
+    });
+    document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+    document.getElementById('lightbox-overlay').addEventListener('click', function (e) {
+      if (e.target.id === 'lightbox-overlay') closeLightbox();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { closeLightbox(); closeModal(); }
+    });
+
+    document.getElementById('btn-add-card').addEventListener('click', openModal);
+    document.getElementById('btn-cancel-add').addEventListener('click', closeModal);
+    document.getElementById('add-modal-overlay').addEventListener('click', function (e) {
+      if (e.target.id === 'add-modal-overlay') closeModal();
+    });
+
+    document.getElementById('add-card-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var fileInput = document.getElementById('new-img');
+      var errorEl = document.getElementById('add-modal-error');
+      var file = fileInput.files[0];
+      if (!file) { errorEl.textContent = 'Selecciona una imagen.'; return; }
+
+      resizeImage(file, MAX_IMG_DIM, 0.82).then(function (dataUrl) {
+        var data = {
+          id: 'custom-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+          img: dataUrl,
+          title: document.getElementById('new-title').value.trim(),
+          tag: document.getElementById('new-tag').value.trim(),
+          desc: document.getElementById('new-desc').value.trim(),
+          price: document.getElementById('new-price').value.trim(),
+          section: document.getElementById('new-section').value
+        };
+        if (!data.title || !data.desc) {
+          errorEl.textContent = 'Completa al menos el nombre y la descripción.';
+          return;
+        }
+        var pages = document.querySelectorAll('.page');
+        var targetGrid = null;
+        for (var i = 0; i < pages.length; i++) {
+          if (pages[i].dataset.sectionLabel === data.section) {
+            targetGrid = pages[i].querySelector('.grid');
+            break;
+          }
+        }
+        if (!targetGrid) targetGrid = document.querySelector('.page .grid');
+        var cardEl = buildCardElement(data);
+        targetGrid.appendChild(cardEl);
+        setEditable(isLoggedIn());
+
+        var list = loadCustomCards();
+        list.push(data);
+        saveCustomCards(list);
+
+        closeModal();
+      }).catch(function () {
+        errorEl.textContent = 'No se pudo procesar la imagen, intenta con otro archivo.';
+      });
+    });
 
     document.getElementById('login-form').addEventListener('submit', function (e) {
       e.preventDefault();
@@ -525,6 +840,14 @@
       if (clonedBar) clonedBar.classList.remove('logged-in');
       var clonedError = docClone.querySelector('#login-error');
       if (clonedError) clonedError.textContent = '';
+      var clonedModal = docClone.querySelector('#add-modal-overlay');
+      if (clonedModal) clonedModal.classList.remove('open');
+      var clonedModalError = docClone.querySelector('#add-modal-error');
+      if (clonedModalError) clonedModalError.textContent = '';
+      var clonedLightbox = docClone.querySelector('#lightbox-overlay');
+      if (clonedLightbox) clonedLightbox.classList.remove('open');
+      var clonedLightboxImg = docClone.querySelector('#lightbox-img');
+      if (clonedLightboxImg) clonedLightboxImg.removeAttribute('src');
 
       var htmlStr = '<!DOCTYPE html>\n' + docClone.outerHTML;
       var blob = new Blob([htmlStr], { type: 'text/html' });
@@ -543,6 +866,7 @@
       setTimeout(function () { btn.textContent = original; }, 2000);
     });
 
+    injectCustomCards();
     applyStoredData();
     refreshUI();
   })();
