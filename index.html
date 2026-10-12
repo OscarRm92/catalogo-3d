@@ -405,7 +405,9 @@
       </form>
       <div id="logged-in-controls">
         <span>Modo edición activo — haz clic en un precio o descripción para editarlo</span>
+        <button id="btn-folder" type="button" class="secondary">Elegir carpeta del proyecto</button>
         <button id="btn-add-card" type="button">+ Agregar pieza</button>
+        <button id="btn-sync" type="button">Guardar en carpeta</button>
         <button id="btn-save" type="button">Guardar cambios</button>
         <button id="btn-export" type="button">Descargar HTML actualizado</button>
         <button id="btn-logout" type="button" class="secondary">Cerrar sesión</button>
@@ -690,6 +692,7 @@
           delete data[id];
           saveData(data);
           saveCustomCards(loadCustomCards().filter(function (c) { return c.id !== id; }));
+          if (dirHandle) syncIndexToFolder();
         });
         card.querySelector('.info').appendChild(btn);
       });
@@ -835,6 +838,60 @@
       if (e.key === 'Escape') { closeLightbox(); closeModal(); }
     });
 
+    // ---------- Carpeta del proyecto (File System Access API: Chrome / Edge) ----------
+    var dirHandle = null;
+    var FS_SUPPORTED = typeof window.showDirectoryPicker === 'function';
+
+    function setFolderLabel() {
+      var btn = document.getElementById('btn-folder');
+      btn.textContent = dirHandle ? 'Carpeta: ' + dirHandle.name + ' ✓' : 'Elegir carpeta del proyecto';
+    }
+    function ensureFolder() {
+      if (dirHandle) return Promise.resolve(dirHandle);
+      if (!FS_SUPPORTED) return Promise.resolve(null);
+      return window.showDirectoryPicker({ mode: 'readwrite' }).then(function (handle) {
+        return handle.getFileHandle('index.html').then(function () {
+          dirHandle = handle;
+          setFolderLabel();
+          return handle;
+        }, function () {
+          alert('La carpeta elegida no contiene index.html. Elige la carpeta del proyecto del catálogo.');
+          return null;
+        });
+      }, function () { return null; });
+    }
+    function writeFile(name, data) {
+      return dirHandle.getFileHandle(name, { create: true }).then(function (fh) {
+        return fh.createWritable();
+      }).then(function (w) {
+        return w.write(data).then(function () { return w.close(); });
+      });
+    }
+    function syncIndexToFolder() {
+      if (!dirHandle) return Promise.resolve(false);
+      return writeFile('index.html', buildExportHtml()).then(function () { return true; });
+    }
+    function slugify(text) {
+      return text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'pieza';
+    }
+
+    document.getElementById('btn-folder').addEventListener('click', function () {
+      if (!FS_SUPPORTED) { alert('Tu navegador no permite elegir carpetas. Usa Chrome o Edge.'); return; }
+      ensureFolder();
+    });
+    document.getElementById('btn-sync').addEventListener('click', function () {
+      var btn = document.getElementById('btn-sync');
+      ensureFolder().then(function (h) {
+        return h ? syncIndexToFolder() : false;
+      }).then(function (ok) {
+        if (!ok) return;
+        var original = btn.textContent;
+        btn.textContent = 'index.html guardado ✓';
+        setTimeout(function () { btn.textContent = original; }, 1800);
+      }).catch(function () { alert('No se pudo escribir en la carpeta.'); });
+    });
+
     document.getElementById('btn-add-card').addEventListener('click', openModal);
     document.getElementById('btn-cancel-add').addEventListener('click', closeModal);
     document.getElementById('add-modal-overlay').addEventListener('click', function (e) {
@@ -848,41 +905,60 @@
       var file = fileInput.files[0];
       if (!file) { errorEl.textContent = 'Selecciona una imagen.'; return; }
 
-      resizeImage(file, MAX_IMG_DIM, 0.82).then(function (dataUrl) {
-        var data = {
-          id: 'custom-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
-          img: dataUrl,
-          title: document.getElementById('new-title').value.trim(),
-          tag: document.getElementById('new-tag').value.trim(),
-          desc: document.getElementById('new-desc').value.trim(),
-          price: document.getElementById('new-price').value.trim(),
-          section: document.getElementById('new-section').value
-        };
-        if (!data.title || !data.desc) {
-          errorEl.textContent = 'Completa al menos el nombre y la descripción.';
+      var title = document.getElementById('new-title').value.trim();
+      var desc = document.getElementById('new-desc').value.trim();
+      if (!title || !desc) {
+        errorEl.textContent = 'Completa al menos el nombre y la descripción.';
+        return;
+      }
+      errorEl.textContent = '';
+
+      // La carpeta se pide primero para conservar el gesto del usuario que exige el navegador.
+      ensureFolder().then(function (folder) {
+        if (FS_SUPPORTED && !folder) {
+          errorEl.textContent = 'Elige la carpeta del proyecto para guardar la imagen.';
           return;
         }
-        var pages = document.querySelectorAll('.page');
-        var targetGrid = null;
-        for (var i = 0; i < pages.length; i++) {
-          if (pages[i].dataset.sectionLabel === data.section) {
-            targetGrid = pages[i].querySelector('.grid');
-            break;
+        return resizeImage(file, 1200, 0.85).then(function (dataUrl) {
+          var data = {
+            id: slugify(title) + '-' + Date.now().toString(36),
+            img: dataUrl,
+            title: title,
+            tag: document.getElementById('new-tag').value.trim(),
+            desc: desc,
+            price: document.getElementById('new-price').value.trim(),
+            section: document.getElementById('new-section').value
+          };
+          var saved = Promise.resolve(false);
+          if (folder) {
+            var fileName = data.id + '.jpeg';
+            saved = fetch(dataUrl).then(function (r) { return r.blob(); }).then(function (blob) {
+              return writeFile(fileName, blob);
+            }).then(function () { data.img = fileName; return true; });
           }
-        }
-        if (!targetGrid) targetGrid = document.querySelector('.page .grid');
-        var cardEl = buildCardElement(data);
-        targetGrid.appendChild(cardEl);
-        ensureDeleteButtons();
-        setEditable(isLoggedIn());
+          return saved.then(function (inFolder) {
+            var pages = document.querySelectorAll('.page');
+            var targetGrid = null;
+            for (var i = 0; i < pages.length; i++) {
+              if (pages[i].dataset.sectionLabel === data.section) {
+                targetGrid = pages[i].querySelector('.grid');
+                break;
+              }
+            }
+            if (!targetGrid) targetGrid = document.querySelector('.page .grid');
+            targetGrid.appendChild(buildCardElement(data));
+            ensureDeleteButtons();
+            setEditable(isLoggedIn());
 
-        var list = loadCustomCards();
-        list.push(data);
-        saveCustomCards(list);
-
-        closeModal();
+            if (inFolder) return syncIndexToFolder();
+            // Sin acceso a carpeta: respaldo en el navegador (base64).
+            var list = loadCustomCards();
+            list.push(data);
+            saveCustomCards(list);
+          }).then(closeModal);
+        });
       }).catch(function () {
-        errorEl.textContent = 'No se pudo procesar la imagen, intenta con otro archivo.';
+        errorEl.textContent = 'No se pudo guardar la pieza, intenta con otro archivo.';
       });
     });
 
@@ -918,11 +994,18 @@
       saveData(data);
       var btn = document.getElementById('btn-save');
       var original = btn.textContent;
-      btn.textContent = 'Cambios guardados ✓';
-      setTimeout(function () { btn.textContent = original; }, 1500);
+      // Además del navegador, se escribe index.html en la carpeta del proyecto (si está disponible).
+      ensureFolder().then(function (folder) {
+        return folder ? syncIndexToFolder().then(function () { return 'Guardado en carpeta ✓'; }) : 'Guardado en el navegador ✓';
+      }).catch(function () {
+        return 'Guardado en navegador (falló la carpeta)';
+      }).then(function (msg) {
+        btn.textContent = msg;
+        setTimeout(function () { btn.textContent = original; }, 2000);
+      });
     });
 
-    document.getElementById('btn-export').addEventListener('click', function () {
+    function buildExportHtml() {
       var docClone = document.documentElement.cloneNode(true);
       Array.prototype.forEach.call(docClone.querySelectorAll('[contenteditable]'), function (el) {
         el.removeAttribute('contenteditable');
@@ -943,7 +1026,11 @@
         btn.style.display = 'none';
       });
 
-      var htmlStr = '<!DOCTYPE html>\n' + docClone.outerHTML;
+      return '<!DOCTYPE html>\n' + docClone.outerHTML;
+    }
+
+    document.getElementById('btn-export').addEventListener('click', function () {
+      var htmlStr = buildExportHtml();
       var blob = new Blob([htmlStr], { type: 'text/html' });
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
