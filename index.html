@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
+<html lang="es"><head>
 <meta charset="UTF-8">
 <title>Catálogo de Impresiones 3D</title>
 <style>
@@ -451,7 +450,7 @@
 </head>
 <body>
 
-  <div id="admin-bar">
+  <div id="admin-bar" class="">
     <div><strong>Panel de edición</strong> — precios y descripciones del catálogo</div>
     <div class="admin-right">
       <form id="login-form">
@@ -462,7 +461,7 @@
       </form>
       <div id="logged-in-controls">
         <span>Modo edición activo — haz clic en un título, precio o descripción para editarlo</span>
-        <button id="btn-token" type="button" class="secondary">Conectar GitHub</button>
+        <button id="btn-token" type="button" class="secondary">GitHub conectado ✓</button>
         <button id="btn-add-card" type="button">+ Agregar pieza</button>
         <button id="btn-save" type="button">Actualizar</button>
         <button id="btn-logout" type="button" class="secondary">Cerrar sesión</button>
@@ -475,16 +474,16 @@
       <h3>Agregar nueva pieza</h3>
       <form id="add-card-form">
         <label>Imagen
-          <input type="file" id="new-img" accept="image/*" required>
+          <input type="file" id="new-img" accept="image/*" required="">
         </label>
         <label>Nombre
-          <input type="text" id="new-title" required placeholder="Ej. Fantasma con escoba">
+          <input type="text" id="new-title" required="" placeholder="Ej. Fantasma con escoba">
         </label>
         <label>Etiqueta / categoría
           <input type="text" id="new-tag" placeholder="Ej. Decorativo">
         </label>
         <label>Descripción
-          <textarea id="new-desc" required placeholder="Breve descripción de lo que se ve en la pieza..."></textarea>
+          <textarea id="new-desc" required="" placeholder="Breve descripción de lo que se ve en la pieza..."></textarea>
         </label>
         <label>Precio / medidas
           <input type="text" id="new-price" placeholder="Medidas / precio: a definir">
@@ -528,15 +527,15 @@
   <div id="status-overlay" class="status-overlay">
     <div class="status-box">
       <div class="status-icon"></div>
-      <h3 id="status-title"></h3>
-      <p id="status-text"></p>
-      <button id="status-ok" type="button">Aceptar</button>
+      <h3 id="status-title">Actualizando…</h3>
+      <p id="status-text">Enviando los cambios a GitHub</p>
+      <button id="status-ok" type="button" style="display: none;">Aceptar</button>
     </div>
   </div>
 
   <div id="lightbox-overlay" class="lightbox-overlay">
-    <button id="lightbox-close" class="lightbox-close" type="button">&times;</button>
-    <img id="lightbox-img" src="" alt="">
+    <button id="lightbox-close" class="lightbox-close" type="button">×</button>
+    <img id="lightbox-img" alt="">
   </div>
 
 
@@ -569,7 +568,7 @@
           <h4>Fantasma con Corazón</h4>
           <p>Pequeño fantasma blanco sosteniendo un corazón rojo entre sus manos. Pieza tierna, ideal como detalle de regalo o decoración de escritorio.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-con-gato">
@@ -579,7 +578,7 @@
           <h4>Fantasma con Gato Negro</h4>
           <p>Fantasma blanco abrazando a un gato negro, impreso en dos colores. Figura entrañable con un toque clásico de Halloween.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-con-globo">
@@ -589,7 +588,7 @@
           <h4>Fantasma Flotante con Globo</h4>
           <p>Fantasma suspendido en un alambre sobre base circular, sujetando un globo rojo. Diseño inspirado en el payaso Pennywise.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-con-globo-florecente">
@@ -599,7 +598,7 @@
           <h4>Fantasma con Globo (Brilla en la Oscuridad)</h4>
           <p>La misma figura de fantasma con globo, impresa en filamento fosforescente: carga luz y brilla en verde/azul al apagar la luz.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -620,7 +619,7 @@
           <h4>Fantasma con Gorro de Lana</h4>
           <p>Fantasma con gorro tejido verde, sosteniendo un libro abierto en una mano y una taza en la otra. Ideal para ambientar otoño/Halloween.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-varios">
@@ -630,7 +629,7 @@
           <h4>Set "Fantasmas Relax"</h4>
           <p>Colección de cinco fantasmas en pose relajada, cada uno con gorro de distinto color y accesorios: audífonos, libro, celular, taza y flotador.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasmas-con-globos">
@@ -640,7 +639,7 @@
           <h4>Set Fantasmas con Globo de Colores</h4>
           <p>Cuatro fantasmas montados en base, cada uno con un globo de color distinto (amarillo, magenta, naranja y rosa). Se puede elegir color individual.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="trick-treat">
@@ -650,7 +649,7 @@
           <h4>Sam (Trick 'r Treat)</h4>
           <p>Figura estilo chibi de Sam, el icónico personaje de la película "Trick 'r Treat", con overol naranja y cabeza de costal cosida.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -671,7 +670,7 @@
           <h4>Michael Myers</h4>
           <p>Figura estilo chibi del icónico asesino de la saga "Halloween", con overol azul, máscara blanca y cuchillo en mano.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="soporte-calabera">
@@ -681,7 +680,7 @@
           <h4>Calavera Articulada</h4>
           <p>Esqueleto chibi sentado, con articulaciones móviles en brazos y piernas. Disponible en distintos colores de filamento.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="soporte-calabera-dorada">
@@ -691,7 +690,7 @@
           <h4>Calavera Articulada Dorada</h4>
           <p>La misma calavera articulada, impresa en filamento dorado metálico para un acabado más elegante y llamativo.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabaza-sentada">
@@ -701,7 +700,7 @@
           <h4>Calabaza Sentada Articulada</h4>
           <p>Calabaza con cuerpo acanalado y piernas articuladas tipo muñeco, en pose sentada. Tallo verde a modo de detalle final.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="pollocuchillo">
@@ -711,7 +710,7 @@
           <h4>Gallina con Cuchillo</h4>
           <p>Gallina blanca con un cuchillo atravesado en la cabeza, ojos en forma de "X" y base simulando un charco de sangre. Pieza de humor negro para Halloween.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -733,7 +732,7 @@
           <h4>Fantasma Rockero</h4>
           <p>Fantasma blanco con lengua roja y ojos negros haciendo el gesto de rock con las manos. Impreso en tres colores: blanco, negro y rojo.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-brujita-guino">
@@ -743,7 +742,7 @@
           <h4>Fantasma Brujita Guiño</h4>
           <p>Fantasma sonriente con sombrero de bruja negro, mejillas rosadas y un ojo guiñado. Un detalle tierno para ambientar la temporada.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-sentado-articulado">
@@ -753,7 +752,7 @@
           <h4>Fantasma Sentado Articulado</h4>
           <p>Fantasma blanco sentado en el borde de una mesa, con brazos y piernas articulados para colgar y darle distintas poses.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-con-los-brazos-arriba">
@@ -763,7 +762,7 @@
           <h4>Fantasma con los Brazos Arriba</h4>
           <p>Clásico fantasma blanco de ojos negros con los brazos en alto, como si saliera a asustar. Base ondulada que le da estabilidad.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-con-cafe">
@@ -773,7 +772,7 @@
           <h4>Fantasma con Café</h4>
           <p>Fantasma blanco sosteniendo un vaso de café humeante. Ideal para el escritorio o para quienes no arrancan sin su café.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-enojado">
@@ -783,7 +782,7 @@
           <h4>Fantasma Enojado</h4>
           <p>Fantasma de brazos cruzados y ceño fruncido. Un toque gruñón y divertido, listo para acompañar la decoración de Halloween.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-sentado-de-orilla">
@@ -793,7 +792,7 @@
           <h4>Fantasma Sentado de Orilla</h4>
           <p>Fantasma blanco con piernas articuladas y zapatitos, pensado para sentarse en el borde de estantes y repisas.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-con-corazon-version-crema">
@@ -803,7 +802,7 @@
           <h4>Fantasma con Corazón (Versión Crema)</h4>
           <p>Fantasma en tono crema sosteniendo un corazón rojo. Una variante del fantasma enamorado, ideal para regalar.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -824,7 +823,7 @@
           <h4>Fantasma Lector con Gorro Rojo</h4>
           <p>Fantasma con gorro rojo, leyendo un libro y sosteniendo una taza. Una figura acogedora para tardes de otoño.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-flotante-con-gorro-navideno">
@@ -834,7 +833,7 @@
           <h4>Fantasma Flotante con Gorro Navideño</h4>
           <p>Fantasma suspendido sobre una base negra, con gorro rojo de Navidad. Se luce tanto en Halloween como en fin de año.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-con-globo-luminoso">
@@ -844,7 +843,7 @@
           <h4>Fantasma con Globo Luminoso</h4>
           <p>Pequeño fantasma que se ilumina con luz cálida y sostiene un globo rojo sujeto con alambre. Inspirado en Pennywise.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasmas-luminosos">
@@ -854,7 +853,7 @@
           <h4>Fantasmas Luminosos</h4>
           <p>Dos pequeñas figuras de fantasma con luz interior amarilla. Crean un ambiente cálido y misterioso en cualquier rincón.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-asustado">
@@ -864,7 +863,7 @@
           <h4>Fantasma Asustado</h4>
           <p>Fantasma blanco con las manos en las mejillas y gesto de susto. Expresivo y muy fácil de combinar con otras piezas.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-con-calabaza-de-dulces">
@@ -874,7 +873,7 @@
           <h4>Fantasma con Calabaza de Dulces</h4>
           <p>Fantasma sonriente cargando una calabaza naranja para recoger dulces. Perfecto para la temporada de Trick or Treat.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-travieso">
@@ -884,7 +883,7 @@
           <h4>Fantasma Travieso</h4>
           <p>Fantasma blanco guiñando un ojo y sacando la lengua. Una figura simpática y juguetona de tamaño compacto.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="fantasma-relajado">
@@ -894,7 +893,7 @@
           <h4>Fantasma Relajado</h4>
           <p>Fantasma recostado con las manos en la cara y los pies en alto, en pose de descanso. Acabado blanco liso.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -915,7 +914,7 @@
           <h4>Calabaza con Sombrero de Bruja</h4>
           <p>Calabaza naranja con sombrero de bruja negro y piernas articuladas, sentada en pose relajada.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="familia-de-calabazas-fantasma">
@@ -925,7 +924,7 @@
           <h4>Familia de Calabazas Fantasma</h4>
           <p>Tres calabazas talladas con forma de fantasma, de distintos tamaños, con piernas articuladas para sentarlas en repisas.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabaza-triste-de-bolsillo">
@@ -935,7 +934,7 @@
           <h4>Calabaza Triste de Bolsillo</h4>
           <p>Pequeña calabaza con carita triste y tallo curvo. Cabe en la palma de la mano y es muy expresiva.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabaza-sentada-con-tallo-verde">
@@ -945,7 +944,7 @@
           <h4>Calabaza Sentada con Tallo Verde</h4>
           <p>Calabaza naranja con tallo verde en forma de rizo y piernas articuladas. Se sienta sola sobre cualquier repisa.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabaza-articulada">
@@ -955,7 +954,7 @@
           <h4>Calabaza Articulada</h4>
           <p>Calabaza de cuerpo acanalado con brazos y piernas articulados, en pose sentada sobre el borde de una mesa.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabaza-alada">
@@ -965,7 +964,7 @@
           <h4>Calabaza Alada</h4>
           <p>Calabaza articulada con alas de murciélago naranjas. Combina lo tierno con un toque de monstruo.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="sombrero-de-bruja-con-piernas">
@@ -975,7 +974,7 @@
           <h4>Sombrero de Bruja con Piernas</h4>
           <p>Sombrero de bruja negro con piernas articuladas naranjas, listo para sentarse en el borde de un estante.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="aranas-calabaza">
@@ -985,7 +984,7 @@
           <h4>Arañas Calabaza</h4>
           <p>Arañas con cuerpo de calabaza y patas articuladas, de tamaño pequeño. Se pueden colocar en cualquier rincón.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabaza-sentada-naranja">
@@ -995,7 +994,7 @@
           <h4>Calabaza Sentada Naranja</h4>
           <p>Calabaza naranja sin cara con brazos y piernas articulados, pensada para sentarse en repisas y escritorios.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabazas-de-la-paz">
@@ -1005,7 +1004,7 @@
           <h4>Calabazas de la Paz</h4>
           <p>Dos calabazas sonrientes haciendo el signo de paz y amor con las manos. Una con piernas articuladas y otra de pie.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabaza-amiga">
@@ -1015,7 +1014,7 @@
           <h4>Calabaza Amiga</h4>
           <p>Calabaza sonriente con piernas articuladas que se sienta en la orilla de una repisa. Pequeña, alegre y coleccionable.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabaza-brillante-articulada">
@@ -1025,7 +1024,7 @@
           <h4>Calabaza Brillante Articulada</h4>
           <p>Calabaza tallada con piernas articuladas, impresa para que parezca iluminada por dentro como un farol de Halloween.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -1046,7 +1045,7 @@
           <h4>Esqueleto Chibi</h4>
           <p>Esqueleto de cabeza grande y estilo chibi, de pie sobre un fondo de cementerio. Acabado en blanco hueso.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="llavero-calavera-de-gato">
@@ -1056,7 +1055,7 @@
           <h4>Llavero Calavera de Gato</h4>
           <p>Cráneo de gato con orejas puntiagudas convertido en llavero. Impreso en tono arena, con argolla metálica.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="esqueleto-articulado">
@@ -1066,7 +1065,7 @@
           <h4>Esqueleto Articulado</h4>
           <p>Esqueleto blanco con articulaciones móviles en brazos, piernas y cuello. Se puede posar de muchas maneras.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="esqueleto-y-su-perro">
@@ -1076,7 +1075,7 @@
           <h4>Esqueleto y su Perro</h4>
           <p>Esqueleto sentado con los brazos cruzados junto a un pequeño perro esqueleto. Dúo en tono hueso.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="esqueleto-acrobata">
@@ -1086,7 +1085,7 @@
           <h4>Esqueleto Acróbata</h4>
           <p>Esqueleto articulado en pose de acrobacia, apoyado sobre las manos junto a su calavera. Impreso en tono arena.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="esqueleto-de-pie">
@@ -1096,7 +1095,7 @@
           <h4>Esqueleto de Pie</h4>
           <p>Esqueleto de ojos rojos con las manos en la cintura, en pose desafiante. Detalle marcado en costillas y huesos.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="esqueleto-tierno">
@@ -1106,7 +1105,7 @@
           <h4>Esqueleto Tierno</h4>
           <p>Esqueleto de estilo kawaii con la cabeza grande y las manos sobre el pecho. Una figura delicada y coleccionable.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="pasadores-de-pelo-calavera-orquidea">
@@ -1116,7 +1115,7 @@
           <h4>Pasadores de Pelo Calavera Orquídea</h4>
           <p>Pasadores con flor de orquídea y una pequeña calavera en el centro, en colores verde lima y rosa.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="esqueleto-articulado-con-brazos-abiertos">
@@ -1126,7 +1125,7 @@
           <h4>Esqueleto Articulado con Brazos Abiertos</h4>
           <p>Esqueleto blanco de pie con brazos y piernas articulados. Ideal para dar poses divertidas en la decoración.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="esqueleto-verde">
@@ -1136,7 +1135,7 @@
           <h4>Esqueleto Verde</h4>
           <p>Esqueleto de color verde lima con ojos amarillos y expresión gruñona. Aspecto de personaje animado.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="soporte-de-control-con-calavera-de-cuernos">
@@ -1146,7 +1145,7 @@
           <h4>Soporte de Control con Calavera de Cuernos</h4>
           <p>Base para control de consola en forma de calavera con cuernos de carnero. Mezcla decoración y utilidad.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="maceta-calavera-con-bonsai">
@@ -1156,7 +1155,7 @@
           <h4>Maceta Calavera con Bonsái</h4>
           <p>Cráneo convertido en maceta con un pequeño bonsái verde encima. Un detalle original para el escritorio.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -1177,7 +1176,7 @@
           <h4>Encapuchado con Máscara Dorada</h4>
           <p>Figura encapuchada en cuclillas con máscara de calavera dorada. Estilo oscuro con un detalle metálico llamativo.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="parca-chibi-saludando">
@@ -1187,7 +1186,7 @@
           <h4>Parca Chibi Saludando</h4>
           <p>Pequeña Parca de capa negra y capucha que saluda con la mano. Cabeza de calavera blanca.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="parca-con-guadana-y-llama">
@@ -1197,7 +1196,7 @@
           <h4>Parca con Guadaña y Llama</h4>
           <p>Parca chibi de capa negra, guadaña dorada y una llama verde en la mano. Calavera brillante en la cabeza.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="gato-parca">
@@ -1207,7 +1206,7 @@
           <h4>Gato Parca</h4>
           <p>Gato negro con capucha y calavera blanca. Combina una mascota tierna con un toque sombrío.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="parca-en-pose-de-paz">
@@ -1217,7 +1216,7 @@
           <h4>Parca en Pose de Paz</h4>
           <p>Parca con sudadera oscura y guantes amarillos, haciendo el signo de paz en una pose dinámica.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="cabra-con-craneo">
@@ -1227,7 +1226,7 @@
           <h4>Cabra con Cráneo</h4>
           <p>Pequeña cabra de cuerpo marrón con cráneo blanco y cuernos curvos. Cabe en la palma de la mano.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="parca-sobre-calaveras">
@@ -1237,7 +1236,7 @@
           <h4>Parca sobre Calaveras</h4>
           <p>Parca sentada sobre un montón de calaveras con su guadaña al hombro. Capa negra con mucho detalle.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="parca-con-calavera">
@@ -1247,7 +1246,7 @@
           <h4>Parca con Calavera</h4>
           <p>Pequeña Parca de capa negra con guadaña, apoyada sobre una calavera y haciendo el signo de paz.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -1268,7 +1267,7 @@
           <h4>Parca Rockera con Calabaza</h4>
           <p>Parca con orejas de gato levantando la mano en gesto de rock, con el pie sobre una calabaza naranja.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="parcas-con-guadana">
@@ -1278,7 +1277,7 @@
           <h4>Parcas con Guadaña</h4>
           <p>Dos Parcas de pie con capa negra y guadaña dorada. Una de ellas sostiene un cartel que dice «I need a hug».</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="perro-esqueleto">
@@ -1288,7 +1287,7 @@
           <h4>Perro Esqueleto</h4>
           <p>Pequeño perro esqueleto en tono arena, sentado, con orejas caídas y mirada tierna.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="parca-con-calavera-en-la-mano">
@@ -1298,7 +1297,7 @@
           <h4>Parca con Calavera en la Mano</h4>
           <p>Pequeña Parca de capa negra sosteniendo una calavera blanca, como si la mostrara con orgullo.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="cabra-demoniaca-con-calavera">
@@ -1308,7 +1307,7 @@
           <h4>Cabra Demoníaca con Calavera</h4>
           <p>Cabra marrón de ojos amarillos y cuernos retorcidos, junto a una calavera. Estilo oscuro y simpático.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="parca-con-corazon">
@@ -1318,7 +1317,7 @@
           <h4>Parca con Corazón</h4>
           <p>Pequeña Parca de capa negra asomándose detrás de un corazón rojo. Un contraste tierno y sombrío.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="gato-esqueleto">
@@ -1328,7 +1327,7 @@
           <h4>Gato Esqueleto</h4>
           <p>Gato esqueleto con orejas grandes y cola enrollada. Impreso en tono arena, de tamaño pequeño.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -1349,7 +1348,7 @@
           <h4>Pinhead (Hellraiser)</h4>
           <p>Figura estilo chibi del cenobita Pinhead, con túnica negra y cabeza cuadriculada con clavos, sosteniendo el cubo.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="ghostface-estilo-stitch">
@@ -1359,7 +1358,7 @@
           <h4>Ghostface Estilo Stitch</h4>
           <p>Mezcla divertida de Ghostface con orejas y manos azules, sosteniendo un cuchillo. Impresión en varios colores.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="ghost-face-de-ojos-moviles">
@@ -1369,7 +1368,7 @@
           <h4>Ghost Face de Ojos Móviles</h4>
           <p>Figura de Ghost Face encapuchado y sentado, con ojos móviles que le dan un aspecto cómico.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="freddy-krueger">
@@ -1379,7 +1378,7 @@
           <h4>Freddy Krueger</h4>
           <p>Figura estilo chibi de Freddy, con sombrero, suéter a rayas y su guante de cuchillas.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="michael-myers-version-cuchillo">
@@ -1389,7 +1388,7 @@
           <h4>Michael Myers (Versión Cuchillo)</h4>
           <p>Figura estilo chibi de Michael Myers con overol azul, máscara blanca y cuchillo en mano.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="gato-grunon">
@@ -1399,7 +1398,7 @@
           <h4>Gato Gruñón</h4>
           <p>Gato gris de pelaje detallado y ojos amarillos, con expresión de enojo. Pieza de carácter fuerte.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="ghostface-sentado-articulado">
@@ -1409,7 +1408,7 @@
           <h4>Ghostface Sentado Articulado</h4>
           <p>Figura de Ghostface con túnica negra y piernas articuladas para sentarla en repisas y escritorios.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="ghostface-con-cuchillo">
@@ -1419,7 +1418,7 @@
           <h4>Ghostface con Cuchillo</h4>
           <p>Figura estilo chibi de Ghostface de túnica negra, máscara blanca y cuchillo en la mano.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -1440,7 +1439,7 @@
           <h4>Leatherface</h4>
           <p>Figura estilo chibi de Leatherface con delantal y motosierra amarilla, en pose amenazante.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="creeper">
@@ -1450,7 +1449,7 @@
           <h4>Creeper</h4>
           <p>Figura estilo chibi del Creeper con sombrero de ala ancha y gabardina larga.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="art-el-payaso">
@@ -1460,7 +1459,7 @@
           <h4>Art el Payaso</h4>
           <p>Figura estilo chibi de Art el Payaso, con traje blanco y negro, sombrero de copa y un cuchillo grande.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="annabelle">
@@ -1470,7 +1469,7 @@
           <h4>Annabelle</h4>
           <p>Figura estilo chibi de la muñeca Annabelle, con vestido blanco, trenzas y lazo rojo en la cintura.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="they-live-ellos-viven">
@@ -1480,7 +1479,7 @@
           <h4>They Live (Ellos Viven)</h4>
           <p>Figura estilo chibi de un alienígena de rostro azul con traje, sosteniendo un cartel que dice «OBEY».</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="jason-voorhees">
@@ -1490,7 +1489,7 @@
           <h4>Jason Voorhees</h4>
           <p>Figura estilo chibi de Jason con máscara de hockey, chaqueta marrón y machete.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="bruja-grunona">
@@ -1500,7 +1499,7 @@
           <h4>Bruja Gruñona</h4>
           <p>Bruja de gesto serio, sombrero puntiagudo y capa negra, en pose de brazos cruzados.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -1521,7 +1520,7 @@
           <h4>Panda Momia</h4>
           <p>Panda envuelto en vendas, con orejas negras y ojos de momia. Se ve muy bien entre libros y decoración de otoño.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="zombie-azul">
@@ -1531,7 +1530,7 @@
           <h4>Zombie Azul</h4>
           <p>Zombie de piel azulada con chaqueta oscura y ojos saltones. Estilo caricaturesco en pose caminando.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="mini-monstruos">
@@ -1541,7 +1540,7 @@
           <h4>Mini Monstruos</h4>
           <p>Colección de pequeños monstruos: fantasmas, un árbol, un alienígena verde y otros personajes con ojos expresivos.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="calabaza-llorona">
@@ -1551,7 +1550,7 @@
           <h4>Calabaza Llorona</h4>
           <p>Figura negra de pie, con cabeza de calabaza naranja de ojos en X y manos cubriendo la cara. Incluye piezas extra.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="merlina-estilo-kitty">
@@ -1561,7 +1560,7 @@
           <h4>Merlina Estilo Kitty</h4>
           <p>Figura de personaje de cabello negro con trenzas y vestido oscuro, inspirada en Merlina con un toque kawaii.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="contenedor-jack-skellington">
@@ -1571,7 +1570,7 @@
           <h4>Contenedor Jack Skellington</h4>
           <p>Contenedor termoformado en forma de cabeza con la sonrisa de Jack Skellington. Se puede llenar de dulces.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="perro-fantasma-con-cadena">
@@ -1581,7 +1580,7 @@
           <h4>Perro Fantasma con Cadena</h4>
           <p>Perro fantasma flotante con collar rojo y una cadena que forma la base. Inspirado en Zero.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="zombie-verde-multipieza">
@@ -1591,7 +1590,7 @@
           <h4>Zombie Verde Multipieza</h4>
           <p>Zombie de piel verde con camisa blanca y corbata roja. Figura impresa en varias piezas para armar.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="contenedor-grinch">
@@ -1601,7 +1600,7 @@
           <h4>Contenedor Grinch</h4>
           <p>Contenedor termoformado en forma de cabeza del Grinch, verde con ojos amarillos. Ideal para guardar dulces.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="momia-en-su-tumba">
@@ -1611,7 +1610,7 @@
           <h4>Momia en su Tumba</h4>
           <p>Pequeña momia de ojos grandes junto a una lápida azul con cruz egipcia y base de arena.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="zombie-thriller">
@@ -1621,7 +1620,7 @@
           <h4>Zombie Thriller</h4>
           <p>Zombi de piel verde con chaqueta roja y pantalón oscuro, al estilo del famoso video musical.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="momia-multicolor">
@@ -1631,7 +1630,7 @@
           <h4>Momia Multicolor</h4>
           <p>Momia chibi con vendas blancas, pantalón azul y ojos amarillos. Impresión en varios colores.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -1652,7 +1651,7 @@
           <h4>Llavero Bruja</h4>
           <p>Llavero de bruja con cabello verde y sombrero negro, con detalles de color. Tamaño ideal para bolsos y mochilas.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="lapidas-personalizables">
@@ -1662,7 +1661,7 @@
           <h4>Lápidas Personalizables</h4>
           <p>Set de pequeñas lápidas con base de tierra, con textos que se pueden personalizar. Perfectas para un cementerio en miniatura.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="cuadro-bruja-en-relieve">
@@ -1672,7 +1671,7 @@
           <h4>Cuadro Bruja en Relieve</h4>
           <p>Ilustración de una brujita con sombrero y cuervo junto a su caldero, en relieve blanco y negro.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="caldero-sentado">
@@ -1682,7 +1681,7 @@
           <h4>Caldero Sentado</h4>
           <p>Caldero negro con piernas articuladas que se sienta en el borde de repisas y escritorios.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="brujita-con-baston">
@@ -1692,7 +1691,7 @@
           <h4>Brujita con Bastón</h4>
           <p>Pequeña bruja blanca con sombrero puntiagudo y bastón. Lista para pintar o dejar en acabado liso.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="hojas-de-otono">
@@ -1702,7 +1701,7 @@
           <h4>Hojas de Otoño</h4>
           <p>Hojas decorativas en tonos naranja y marrón. Complemento ideal para escenografías de otoño.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="casita-caldero">
@@ -1712,7 +1711,7 @@
           <h4>Casita Caldero</h4>
           <p>Caldero con puerta y ventanas iluminadas, líquido verde burbujeante y base de piedras. Un rincón de bruja en miniatura.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="bruja-en-escoba-sticker-3d">
@@ -1722,7 +1721,7 @@
           <h4>Bruja en Escoba (Sticker 3D)</h4>
           <p>Ilustración de una bruja con sombrero volando en escoba, en formato de pieza plana con borde blanco.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="hojas-de-arce-naranjas">
@@ -1732,7 +1731,7 @@
           <h4>Hojas de Arce Naranjas</h4>
           <p>Conjunto de pequeñas hojas de arce naranjas para decorar mesas, vitrinas o escenas de otoño.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
       <div class="card" data-id="sombrero-de-bruja-morado">
@@ -1742,7 +1741,7 @@
           <h4>Sombrero de Bruja Morado</h4>
           <p>Sombrero de bruja morado con hebilla naranja. Un accesorio decorativo para ambientar la temporada.</p>
           <div class="price">Medidas / precio: a definir</div>
-        </div>
+        <button type="button" class="delete-btn" style="display: none;">Eliminar pieza</button></div>
       </div>
 
     </div>
@@ -2195,5 +2194,6 @@
   })();
   </script>
 
-</body>
-</html>
+
+
+</body></html>
