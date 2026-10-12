@@ -366,6 +366,59 @@
     margin-bottom: 10px;
   }
 
+  /* ---------- Modal de estado (loader / éxito / error) ---------- */
+  .status-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    background: rgba(10, 6, 12, 0.75);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  .status-overlay.open { display: flex; }
+  .status-box {
+    background: #1b1023;
+    color: #fff5e6;
+    width: 100%;
+    max-width: 380px;
+    border-radius: 10px;
+    padding: 28px 24px 22px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  .status-box h3 { margin: 14px 0 6px; font-size: 20px; color: #ffb877; }
+  .status-box p { margin: 0 0 18px; font-size: 15px; line-height: 1.5; color: #f0ddc9; }
+  .status-box button {
+    padding: 8px 22px;
+    border-radius: 5px;
+    border: none;
+    background: #ff7a1a;
+    color: #1b1023;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .status-icon {
+    width: 56px; height: 56px;
+    margin: 0 auto;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 30px; font-weight: 700;
+  }
+  .status-overlay[data-kind="loading"] .status-icon {
+    border: 5px solid #5a4c40;
+    border-top-color: #ff7a1a;
+    animation: status-spin 0.8s linear infinite;
+  }
+  .status-overlay[data-kind="success"] .status-icon { background: #2e9e5b; color: #fff; }
+  .status-overlay[data-kind="success"] .status-icon::before { content: "\2713"; }
+  .status-overlay[data-kind="error"] .status-icon { background: #c0392b; color: #fff; }
+  .status-overlay[data-kind="error"] .status-icon::before { content: "!"; }
+  @keyframes status-spin { to { transform: rotate(360deg); } }
+
   /* ---------- Botón eliminar (solo admin) ---------- */
   .card .delete-btn {
     display: none;
@@ -387,7 +440,7 @@
   @media print {
     #admin-bar { display: none !important; }
     [contenteditable] { outline: none !important; background: transparent !important; }
-    .modal-overlay, .lightbox-overlay { display: none !important; }
+    .modal-overlay, .lightbox-overlay, .status-overlay { display: none !important; }
     .delete-btn { display: none !important; }
   }
 </style>
@@ -407,9 +460,7 @@
         <span>Modo edición activo — haz clic en un precio o descripción para editarlo</span>
         <button id="btn-folder" type="button" class="secondary">Elegir carpeta del proyecto</button>
         <button id="btn-add-card" type="button">+ Agregar pieza</button>
-        <button id="btn-sync" type="button">Guardar en carpeta</button>
-        <button id="btn-save" type="button">Guardar cambios</button>
-        <button id="btn-export" type="button">Descargar HTML actualizado</button>
+        <button id="btn-save" type="button">Actualizar</button>
         <button id="btn-logout" type="button" class="secondary">Cerrar sesión</button>
       </div>
     </div>
@@ -443,6 +494,15 @@
           <button type="submit">Agregar al catálogo</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div id="status-overlay" class="status-overlay">
+    <div class="status-box">
+      <div class="status-icon"></div>
+      <h3 id="status-title"></h3>
+      <p id="status-text"></p>
+      <button id="status-ok" type="button">Aceptar</button>
     </div>
   </div>
 
@@ -880,17 +940,20 @@
       if (!FS_SUPPORTED) { alert('Tu navegador no permite elegir carpetas. Usa Chrome o Edge.'); return; }
       ensureFolder();
     });
-    document.getElementById('btn-sync').addEventListener('click', function () {
-      var btn = document.getElementById('btn-sync');
-      ensureFolder().then(function (h) {
-        return h ? syncIndexToFolder() : false;
-      }).then(function (ok) {
-        if (!ok) return;
-        var original = btn.textContent;
-        btn.textContent = 'index.html guardado ✓';
-        setTimeout(function () { btn.textContent = original; }, 1800);
-      }).catch(function () { alert('No se pudo escribir en la carpeta.'); });
-    });
+
+    // ---------- Modal de estado (cargando / éxito / error) ----------
+    function showStatus(kind, title, text) {
+      var overlay = document.getElementById('status-overlay');
+      overlay.dataset.kind = kind;
+      document.getElementById('status-title').textContent = title;
+      document.getElementById('status-text').textContent = text || '';
+      document.getElementById('status-ok').style.display = kind === 'loading' ? 'none' : 'inline-block';
+      overlay.classList.add('open');
+    }
+    function hideStatus() {
+      document.getElementById('status-overlay').classList.remove('open');
+    }
+    document.getElementById('status-ok').addEventListener('click', hideStatus);
 
     document.getElementById('btn-add-card').addEventListener('click', openModal);
     document.getElementById('btn-cancel-add').addEventListener('click', closeModal);
@@ -992,16 +1055,21 @@
         };
       });
       saveData(data);
-      var btn = document.getElementById('btn-save');
-      var original = btn.textContent;
-      // Además del navegador, se escribe index.html en la carpeta del proyecto (si está disponible).
+      // La carpeta se pide primero (si hace falta) para conservar el gesto del usuario.
       ensureFolder().then(function (folder) {
-        return folder ? syncIndexToFolder().then(function () { return 'Guardado en carpeta ✓'; }) : 'Guardado en el navegador ✓';
+        if (!folder) {
+          showStatus('error', 'No se pudo actualizar',
+            FS_SUPPORTED
+              ? 'Elige la carpeta del proyecto para poder guardar los cambios en index.html.'
+              : 'Este navegador no permite guardar en la carpeta del proyecto. Usa Chrome o Edge.');
+          return;
+        }
+        showStatus('loading', 'Actualizando…', 'Guardando los cambios en index.html');
+        return Promise.all([syncIndexToFolder(), new Promise(function (r) { setTimeout(r, 600); })]).then(function () {
+          showStatus('success', '¡Actualizado!', 'Los cambios se guardaron en la carpeta del proyecto. Falta subirlos con git para publicarlos.');
+        });
       }).catch(function () {
-        return 'Guardado en navegador (falló la carpeta)';
-      }).then(function (msg) {
-        btn.textContent = msg;
-        setTimeout(function () { btn.textContent = original; }, 2000);
+        showStatus('error', 'No se pudo actualizar', 'Falló la escritura en la carpeta. Revisa los permisos e inténtalo de nuevo.');
       });
     });
 
@@ -1018,6 +1086,11 @@
       if (clonedModal) clonedModal.classList.remove('open');
       var clonedModalError = docClone.querySelector('#add-modal-error');
       if (clonedModalError) clonedModalError.textContent = '';
+      var clonedStatus = docClone.querySelector('#status-overlay');
+      if (clonedStatus) {
+        clonedStatus.classList.remove('open');
+        clonedStatus.removeAttribute('data-kind');
+      }
       var clonedLightbox = docClone.querySelector('#lightbox-overlay');
       if (clonedLightbox) clonedLightbox.classList.remove('open');
       var clonedLightboxImg = docClone.querySelector('#lightbox-img');
@@ -1029,23 +1102,32 @@
       return '<!DOCTYPE html>\n' + docClone.outerHTML;
     }
 
-    document.getElementById('btn-export').addEventListener('click', function () {
-      var htmlStr = buildExportHtml();
-      var blob = new Blob([htmlStr], { type: 'text/html' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = 'index.html';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      var btn = document.getElementById('btn-export');
-      var original = btn.textContent;
-      btn.textContent = 'Archivo descargado ✓';
-      setTimeout(function () { btn.textContent = original; }, 2000);
-    });
+    // ---------- Auto-recarga cuando se publica una versión nueva ----------
+    var CHECK_EVERY_MS = 30000;
+    var baselineHtml = null;
+    function fetchCurrentHtml() {
+      return fetch(location.pathname + '?v=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+        if (!r.ok) throw new Error('status ' + r.status);
+        return r.text();
+      });
+    }
+    function checkForUpdate() {
+      if (document.hidden) return;
+      fetchCurrentHtml().then(function (html) {
+        if (baselineHtml === null) { baselineHtml = html; return; }
+        if (html === baselineHtml) return;
+        // No se recarga mientras el admin edita, para no perder cambios sin guardar.
+        if (isLoggedIn() || document.getElementById('add-modal-overlay').classList.contains('open')) return;
+        location.reload();
+      }).catch(function () { /* sin red o abierto como archivo local: se ignora */ });
+    }
+    if (location.protocol === 'http:' || location.protocol === 'https:') {
+      checkForUpdate();
+      setInterval(checkForUpdate, CHECK_EVERY_MS);
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) checkForUpdate();
+      });
+    }
 
     injectCustomCards();
     applyHiddenCards();
