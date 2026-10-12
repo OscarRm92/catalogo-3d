@@ -359,6 +359,10 @@
     color: #fff5e6;
     border: 1px solid #5a4c40;
   }
+  .modal-help { font-size: 13.5px; line-height: 1.5; color: #f0ddc9; margin: 0 0 10px; }
+  ol.modal-help { padding-left: 20px; }
+  .modal-help a { color: #ffb877; }
+  .modal-help code { background: #2b1b12; padding: 1px 5px; border-radius: 3px; }
   .modal-error {
     color: #ff8080;
     font-size: 13.5px;
@@ -458,7 +462,7 @@
       </form>
       <div id="logged-in-controls">
         <span>Modo edición activo — haz clic en un título, precio o descripción para editarlo</span>
-        <button id="btn-folder" type="button" class="secondary">Elegir carpeta del proyecto</button>
+        <button id="btn-token" type="button" class="secondary">Conectar GitHub</button>
         <button id="btn-add-card" type="button">+ Agregar pieza</button>
         <button id="btn-save" type="button">Actualizar</button>
         <button id="btn-logout" type="button" class="secondary">Cerrar sesión</button>
@@ -492,6 +496,30 @@
         <div class="modal-actions">
           <button type="button" id="btn-cancel-add" class="secondary">Cancelar</button>
           <button type="submit">Agregar al catálogo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="token-overlay" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Conectar con GitHub</h3>
+      <p class="modal-help">Para publicar cambios desde esta página hace falta un token de GitHub. Se crea una sola vez:</p>
+      <ol class="modal-help">
+        <li>Abre <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>.</li>
+        <li>En «Repository access» elige <strong>Only select repositories</strong> y marca <strong>catalogo-3d</strong>.</li>
+        <li>En «Permissions → Repository permissions» pon <strong>Contents: Read and write</strong>.</li>
+        <li>Genera el token, cópialo (empieza con <code>github_pat_</code>) y pégalo aquí.</li>
+      </ol>
+      <p class="modal-help">Se guarda solo en este navegador. No lo compartas.</p>
+      <form id="token-form">
+        <label>Token
+          <input type="password" id="gh-token-input" autocomplete="off" placeholder="github_pat_...">
+        </label>
+        <div class="modal-actions">
+          <button type="button" id="btn-token-remove" class="secondary">Quitar token</button>
+          <button type="button" id="btn-token-cancel" class="secondary">Cancelar</button>
+          <button type="submit">Guardar token</button>
         </div>
       </form>
     </div>
@@ -1727,41 +1755,10 @@
 
   <script>
   (function () {
-    var STORAGE_KEY = 'catalogo3d_data_v1';
-    var CUSTOM_CARDS_KEY = 'catalogo3d_custom_cards_v1';
-    var HIDDEN_CARDS_KEY = 'catalogo3d_hidden_cards_v1';
     var SESSION_KEY = 'catalogo3d_admin_session';
-    var ADMIN_USER = 'Admin';
-    var ADMIN_PASS = '4dm1n';
-    var MAX_IMG_DIM = 900;
+    var ADMIN_USER = 'AdminRanas';
+    var ADMIN_PASS = '4dm1nR4n4s';
 
-    function loadData() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }
-      catch (e) { return {}; }
-    }
-    function saveData(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-    function loadCustomCards() {
-      try { return JSON.parse(localStorage.getItem(CUSTOM_CARDS_KEY)) || []; }
-      catch (e) { return []; }
-    }
-    function saveCustomCards(list) {
-      localStorage.setItem(CUSTOM_CARDS_KEY, JSON.stringify(list));
-    }
-    function loadHidden() {
-      try { return JSON.parse(localStorage.getItem(HIDDEN_CARDS_KEY)) || []; }
-      catch (e) { return []; }
-    }
-    function saveHidden(list) {
-      localStorage.setItem(HIDDEN_CARDS_KEY, JSON.stringify(list));
-    }
-    function applyHiddenCards() {
-      loadHidden().forEach(function (id) {
-        var card = document.querySelector('.card[data-id="' + id + '"]');
-        if (card) card.remove();
-      });
-    }
     function ensureDeleteButtons() {
       Array.prototype.forEach.call(document.querySelectorAll('.card'), function (card) {
         if (card.querySelector('.delete-btn')) return;
@@ -1770,20 +1767,8 @@
         btn.className = 'delete-btn';
         btn.textContent = 'Eliminar pieza';
         btn.addEventListener('click', function () {
-          if (!confirm('¿Eliminar esta pieza del catálogo? Esta acción no se puede deshacer.')) return;
-          var id = card.dataset.id;
+          if (!confirm('¿Eliminar esta pieza del catálogo? Se quitará del sitio cuando pulses «Actualizar».')) return;
           card.remove();
-
-          var hidden = loadHidden();
-          if (hidden.indexOf(id) === -1) {
-            hidden.push(id);
-            saveHidden(hidden);
-          }
-          var data = loadData();
-          delete data[id];
-          saveData(data);
-          saveCustomCards(loadCustomCards().filter(function (c) { return c.id !== id; }));
-          if (dirHandle) syncIndexToFolder();
         });
         card.querySelector('.info').appendChild(btn);
       });
@@ -1801,17 +1786,6 @@
           desc: card.querySelector('.info p'),
           price: card.querySelector('.info .price')
         };
-      });
-    }
-    function applyStoredData() {
-      var data = loadData();
-      getCards().forEach(function (c) {
-        var entry = data[c.id];
-        if (entry) {
-          if (entry.title) c.title.textContent = entry.title;
-          if (entry.desc) c.desc.textContent = entry.desc;
-          if (entry.price) c.price.textContent = entry.price;
-        }
       });
     }
     function setEditable(on) {
@@ -1834,6 +1808,11 @@
       setEditable(loggedIn);
     }
 
+    function esc(text) {
+      var d = document.createElement('div');
+      d.textContent = text;
+      return d.innerHTML;
+    }
     function buildCardElement(data) {
       var card = document.createElement('div');
       card.className = 'card';
@@ -1841,28 +1820,12 @@
       card.innerHTML =
         '<div class="img-wrap"><img src="' + data.img + '" alt=""></div>' +
         '<div class="info">' +
-          '<span class="tag">' + (data.tag || 'Decorativo') + '</span>' +
-          '<h4>' + data.title + '</h4>' +
-          '<p>' + data.desc + '</p>' +
-          '<div class="price">' + (data.price || 'Medidas / precio: a definir') + '</div>' +
+          '<span class="tag">' + esc(data.tag || 'Decorativo') + '</span>' +
+          '<h4>' + esc(data.title) + '</h4>' +
+          '<p>' + esc(data.desc) + '</p>' +
+          '<div class="price">' + esc(data.price || 'Medidas / precio: a definir') + '</div>' +
         '</div>';
       return card;
-    }
-
-    function injectCustomCards() {
-      loadCustomCards().forEach(function (data) {
-        if (document.querySelector('.card[data-id="' + data.id + '"]')) return;
-        var pages = document.querySelectorAll('.page');
-        var targetGrid = null;
-        for (var i = 0; i < pages.length; i++) {
-          if (pages[i].dataset.sectionLabel === data.section) {
-            targetGrid = pages[i].querySelector('.grid');
-            break;
-          }
-        }
-        if (!targetGrid) targetGrid = document.querySelector('.page .grid');
-        targetGrid.appendChild(buildCardElement(data));
-      });
     }
 
     function populateSectionSelect() {
@@ -1929,50 +1892,128 @@
       if (e.target.id === 'lightbox-overlay') closeLightbox();
     });
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape') { closeLightbox(); closeModal(); }
+      if (e.key === 'Escape') { closeLightbox(); closeModal(); closeTokenModal(); }
     });
 
-    // ---------- Carpeta del proyecto (File System Access API: Chrome / Edge) ----------
-    var dirHandle = null;
-    var FS_SUPPORTED = typeof window.showDirectoryPicker === 'function';
+    // ---------- Publicación en GitHub (API de contenidos) ----------
+    var GH_REPO = 'OscarRm92/catalogo-3d';
+    var GH_BRANCH = 'master';
+    var GH_TOKEN_KEY = 'catalogo3d_gh_token';
 
-    function setFolderLabel() {
-      var btn = document.getElementById('btn-folder');
-      btn.textContent = dirHandle ? 'Carpeta: ' + dirHandle.name + ' ✓' : 'Elegir carpeta del proyecto';
+    function getToken() {
+      try { return localStorage.getItem(GH_TOKEN_KEY) || ''; } catch (e) { return ''; }
     }
-    function ensureFolder() {
-      if (dirHandle) return Promise.resolve(dirHandle);
-      if (!FS_SUPPORTED) return Promise.resolve(null);
-      return window.showDirectoryPicker({ mode: 'readwrite' }).then(function (handle) {
-        return handle.getFileHandle('index.html').then(function () {
-          dirHandle = handle;
-          setFolderLabel();
-          return handle;
-        }, function () {
-          alert('La carpeta elegida no contiene index.html. Elige la carpeta del proyecto del catálogo.');
-          return null;
-        });
-      }, function () { return null; });
+    function setToken(token) {
+      try {
+        if (token) localStorage.setItem(GH_TOKEN_KEY, token);
+        else localStorage.removeItem(GH_TOKEN_KEY);
+      } catch (e) { /* almacenamiento bloqueado */ }
+      refreshTokenLabel();
     }
-    function writeFile(name, data) {
-      return dirHandle.getFileHandle(name, { create: true }).then(function (fh) {
-        return fh.createWritable();
-      }).then(function (w) {
-        return w.write(data).then(function () { return w.close(); });
+    function refreshTokenLabel() {
+      document.getElementById('btn-token').textContent = getToken() ? 'GitHub conectado ✓' : 'Conectar GitHub';
+    }
+    function openTokenModal() {
+      document.getElementById('gh-token-input').value = '';
+      document.getElementById('token-overlay').classList.add('open');
+    }
+    function closeTokenModal() {
+      document.getElementById('token-overlay').classList.remove('open');
+    }
+    function requireToken() {
+      if (getToken()) return true;
+      openTokenModal();
+      return false;
+    }
+
+    function ghRequest(method, path, body) {
+      var url = 'https://api.github.com/repos/' + GH_REPO + '/contents/' + path;
+      if (method === 'GET') url += '?ref=' + GH_BRANCH + '&t=' + Date.now();
+      var headers = {
+        'Authorization': 'Bearer ' + getToken(),
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28'
+      };
+      if (body) headers['Content-Type'] = 'application/json';
+      return fetch(url, {
+        method: method,
+        headers: headers,
+        body: body ? JSON.stringify(body) : undefined,
+        cache: 'no-store'
+      }).then(function (r) {
+        if (r.ok) return r.json();
+        var err = new Error('GitHub ' + r.status);
+        err.status = r.status;
+        throw err;
       });
     }
-    function syncIndexToFolder() {
-      if (!dirHandle) return Promise.resolve(false);
-      return writeFile('index.html', buildExportHtml()).then(function () { return true; });
+    function describeGhError(err) {
+      if (err && err.stale) return 'Otra persona publicó cambios mientras editabas. Recarga la página (Ctrl+F5) y vuelve a hacer tu cambio.';
+      var st = err && err.status;
+      if (st === 401) return 'El token de GitHub no es válido o venció. Pulsa «Conectar GitHub» y pega uno nuevo.';
+      if (st === 403 || st === 404) return 'El token no tiene permiso de escritura sobre el repositorio. Debe tener acceso a catalogo-3d con «Contents: Read and write».';
+      if (st === 409 || st === 422) return 'Hubo un conflicto con otra publicación. Recarga la página (Ctrl+F5) e inténtalo otra vez.';
+      return 'No se pudo conectar con GitHub. Revisa tu conexión e inténtalo otra vez.';
+    }
+
+    function utf8ToBase64(str) {
+      var bytes = new TextEncoder().encode(str), bin = '';
+      for (var i = 0; i < bytes.length; i += 0x8000) {
+        bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+      }
+      return btoa(bin);
+    }
+    function base64ToUtf8(b64) {
+      var bin = atob(b64.replace(/\s/g, '')), bytes = new Uint8Array(bin.length);
+      for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+      return new TextDecoder().decode(bytes);
+    }
+
+    // Sube index.html con el estado actual de la página. Si alguien más publicó
+    // antes, se aborta para no pisar sus cambios.
+    function publishIndex(message) {
+      return ghRequest('GET', 'index.html').then(function (remote) {
+        if (baselineHtml !== null && remote.content && base64ToUtf8(remote.content) !== baselineHtml) {
+          var stale = new Error('stale');
+          stale.stale = true;
+          throw stale;
+        }
+        var html = buildExportHtml();
+        return ghRequest('PUT', 'index.html', {
+          message: message,
+          content: utf8ToBase64(html),
+          sha: remote.sha,
+          branch: GH_BRANCH
+        }).then(function () { baselineHtml = html; });
+      });
+    }
+    function uploadImage(fileName, dataUrl) {
+      return ghRequest('PUT', encodeURIComponent(fileName), {
+        message: 'Agrega imagen ' + fileName,
+        content: dataUrl.split(',')[1],
+        branch: GH_BRANCH
+      });
     }
     function slugify(text) {
-      return text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+      return text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
         .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'pieza';
     }
 
-    document.getElementById('btn-folder').addEventListener('click', function () {
-      if (!FS_SUPPORTED) { alert('Tu navegador no permite elegir carpetas. Usa Chrome o Edge.'); return; }
-      ensureFolder();
+    document.getElementById('btn-token').addEventListener('click', openTokenModal);
+    document.getElementById('btn-token-cancel').addEventListener('click', closeTokenModal);
+    document.getElementById('btn-token-remove').addEventListener('click', function () {
+      setToken('');
+      closeTokenModal();
+    });
+    document.getElementById('token-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var token = document.getElementById('gh-token-input').value.trim();
+      if (!token) return;
+      setToken(token);
+      closeTokenModal();
+    });
+    document.getElementById('token-overlay').addEventListener('click', function (e) {
+      if (e.target.id === 'token-overlay') closeTokenModal();
     });
 
     // ---------- Modal de estado (cargando / éxito / error) ----------
@@ -2010,52 +2051,45 @@
       }
       errorEl.textContent = '';
 
-      // La carpeta se pide primero para conservar el gesto del usuario que exige el navegador.
-      ensureFolder().then(function (folder) {
-        if (FS_SUPPORTED && !folder) {
-          errorEl.textContent = 'Elige la carpeta del proyecto para guardar la imagen.';
-          return;
-        }
-        return resizeImage(file, 1200, 0.85).then(function (dataUrl) {
-          var data = {
-            id: slugify(title) + '-' + Date.now().toString(36),
-            img: dataUrl,
-            title: title,
-            tag: document.getElementById('new-tag').value.trim(),
-            desc: desc,
-            price: document.getElementById('new-price').value.trim(),
-            section: document.getElementById('new-section').value
-          };
-          var saved = Promise.resolve(false);
-          if (folder) {
-            var fileName = data.id + '.jpeg';
-            saved = fetch(dataUrl).then(function (r) { return r.blob(); }).then(function (blob) {
-              return writeFile(fileName, blob);
-            }).then(function () { data.img = fileName; return true; });
-          }
-          return saved.then(function (inFolder) {
-            var pages = document.querySelectorAll('.page');
-            var targetGrid = null;
-            for (var i = 0; i < pages.length; i++) {
-              if (pages[i].dataset.sectionLabel === data.section) {
-                targetGrid = pages[i].querySelector('.grid');
-                break;
-              }
-            }
-            if (!targetGrid) targetGrid = document.querySelector('.page .grid');
-            targetGrid.appendChild(buildCardElement(data));
-            ensureDeleteButtons();
-            setEditable(isLoggedIn());
+      if (!requireToken()) return;
+      showStatus('loading', 'Publicando pieza…', 'Subiendo la imagen y actualizando el catálogo');
 
-            if (inFolder) return syncIndexToFolder();
-            // Sin acceso a carpeta: respaldo en el navegador (base64).
-            var list = loadCustomCards();
-            list.push(data);
-            saveCustomCards(list);
-          }).then(closeModal);
+      var cardEl = null;
+      resizeImage(file, 1200, 0.85).then(function (dataUrl) {
+        var data = {
+          id: slugify(title) + '-' + Date.now().toString(36),
+          img: dataUrl,
+          title: title,
+          tag: document.getElementById('new-tag').value.trim(),
+          desc: desc,
+          price: document.getElementById('new-price').value.trim(),
+          section: document.getElementById('new-section').value
+        };
+        var fileName = data.id + '.jpeg';
+        return uploadImage(fileName, dataUrl).then(function () {
+          var pages = document.querySelectorAll('.page');
+          var targetGrid = null;
+          for (var i = 0; i < pages.length; i++) {
+            if (pages[i].dataset.sectionLabel === data.section) {
+              targetGrid = pages[i].querySelector('.grid');
+              break;
+            }
+          }
+          if (!targetGrid) targetGrid = document.querySelector('.page .grid');
+          cardEl = buildCardElement(data);
+          // En pantalla se ve la imagen local; al publicar se escribe el nombre del archivo.
+          cardEl.querySelector('img').setAttribute('data-publish-src', fileName);
+          targetGrid.appendChild(cardEl);
+          ensureDeleteButtons();
+          setEditable(isLoggedIn());
+          return publishIndex('Agrega pieza: ' + title);
         });
-      }).catch(function () {
-        errorEl.textContent = 'No se pudo guardar la pieza, intenta con otro archivo.';
+      }).then(function () {
+        closeModal();
+        showStatus('success', '¡Pieza publicada!', 'La pieza ya está en GitHub. El sitio se actualizará solo en uno o dos minutos.');
+      }).catch(function (err) {
+        if (cardEl) cardEl.remove();
+        showStatus('error', 'No se pudo publicar la pieza', describeGhError(err));
       });
     });
 
@@ -2081,30 +2115,15 @@
     });
 
     document.getElementById('btn-save').addEventListener('click', function () {
-      var data = loadData();
-      getCards().forEach(function (c) {
-        data[c.id] = {
-          title: c.title.textContent.trim(),
-          desc: c.desc.textContent.trim(),
-          price: c.price.textContent.trim()
-        };
-      });
-      saveData(data);
-      // La carpeta se pide primero (si hace falta) para conservar el gesto del usuario.
-      ensureFolder().then(function (folder) {
-        if (!folder) {
-          showStatus('error', 'No se pudo actualizar',
-            FS_SUPPORTED
-              ? 'Elige la carpeta del proyecto para poder guardar los cambios en index.html.'
-              : 'Este navegador no permite guardar en la carpeta del proyecto. Usa Chrome o Edge.');
-          return;
-        }
-        showStatus('loading', 'Actualizando…', 'Guardando los cambios en index.html');
-        return Promise.all([syncIndexToFolder(), new Promise(function (r) { setTimeout(r, 600); })]).then(function () {
-          showStatus('success', '¡Actualizado!', 'Los cambios se guardaron en la carpeta del proyecto. Falta subirlos con git para publicarlos.');
-        });
-      }).catch(function () {
-        showStatus('error', 'No se pudo actualizar', 'Falló la escritura en la carpeta. Revisa los permisos e inténtalo de nuevo.');
+      if (!requireToken()) return;
+      showStatus('loading', 'Actualizando…', 'Enviando los cambios a GitHub');
+      Promise.all([
+        publishIndex('Actualiza catálogo desde el panel'),
+        new Promise(function (r) { setTimeout(r, 600); })
+      ]).then(function () {
+        showStatus('success', '¡Actualizado!', 'Los cambios ya están en GitHub. El sitio se actualizará solo en uno o dos minutos.');
+      }).catch(function (err) {
+        showStatus('error', 'No se pudo actualizar', describeGhError(err));
       });
     });
 
@@ -2126,6 +2145,12 @@
         clonedStatus.classList.remove('open');
         clonedStatus.removeAttribute('data-kind');
       }
+      var clonedToken = docClone.querySelector('#token-overlay');
+      if (clonedToken) clonedToken.classList.remove('open');
+      Array.prototype.forEach.call(docClone.querySelectorAll('img[data-publish-src]'), function (img) {
+        img.setAttribute('src', img.getAttribute('data-publish-src'));
+        img.removeAttribute('data-publish-src');
+      });
       var clonedLightbox = docClone.querySelector('#lightbox-overlay');
       if (clonedLightbox) clonedLightbox.classList.remove('open');
       var clonedLightboxImg = docClone.querySelector('#lightbox-img');
@@ -2147,7 +2172,7 @@
       });
     }
     function checkForUpdate() {
-      if (document.hidden) return;
+      if (document.hidden && baselineHtml !== null) return;
       fetchCurrentHtml().then(function (html) {
         if (baselineHtml === null) { baselineHtml = html; return; }
         if (html === baselineHtml) return;
@@ -2164,11 +2189,9 @@
       });
     }
 
-    injectCustomCards();
-    applyHiddenCards();
     ensureDeleteButtons();
-    applyStoredData();
     refreshUI();
+    refreshTokenLabel();
   })();
   </script>
 
