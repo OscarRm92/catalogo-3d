@@ -2144,6 +2144,15 @@
         clonedStatus.classList.remove('open');
         clonedStatus.removeAttribute('data-kind');
       }
+      // Estado temporal de la sesión que no debe quedar escrito en el archivo publicado.
+      var clonedTokenBtn = docClone.querySelector('#btn-token');
+      if (clonedTokenBtn) clonedTokenBtn.textContent = 'Conectar GitHub';
+      var clonedStatusTitle = docClone.querySelector('#status-title');
+      if (clonedStatusTitle) clonedStatusTitle.textContent = '';
+      var clonedStatusText = docClone.querySelector('#status-text');
+      if (clonedStatusText) clonedStatusText.textContent = '';
+      var clonedStatusOk = docClone.querySelector('#status-ok');
+      if (clonedStatusOk) clonedStatusOk.removeAttribute('style');
       var clonedToken = docClone.querySelector('#token-overlay');
       if (clonedToken) clonedToken.classList.remove('open');
       Array.prototype.forEach.call(docClone.querySelectorAll('img[data-publish-src]'), function (img) {
