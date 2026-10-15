@@ -192,11 +192,15 @@
     font-family: 'Segoe UI', Arial, sans-serif;
     font-size: 15px;
     padding: 8px 16px;
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
     flex-wrap: wrap;
+  }
+  #admin-bar.revealed,
+  #admin-bar.logged-in {
+    display: flex;
   }
   #admin-bar strong { color: #ffb877; }
   #admin-bar .admin-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
@@ -457,6 +461,31 @@
     cursor: pointer;
     padding: 0;
     font-family: inherit;
+  }
+  .contact-block {
+    max-width: 320px;
+    margin: 0 auto 26px;
+    padding: 20px;
+    background: #fff0e0;
+    border: 1px solid #e8dcd0;
+    border-radius: 10px;
+  }
+  .contact-block h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #c05a10;
+  }
+  .contact-block img {
+    width: 160px;
+    height: 160px;
+    display: block;
+    margin: 0 auto 10px;
+    border-radius: 6px;
+  }
+  .contact-block p {
+    margin: 0;
+    font-size: 12px;
+    color: #6b5440;
   }
   .privacy-box { max-width: 580px; text-align: left; }
   .privacy-text {
@@ -1676,12 +1705,18 @@
   </div>
 
   <footer id="site-footer">
+    <div class="contact-block">
+      <h4>¿Te interesa una pieza? Escríbenos</h4>
+      <img src="qr-whatsapp.png" alt="Código QR de contacto por WhatsApp">
+      <p>Escanea el código con tu celular para escribirnos por WhatsApp.</p>
+    </div>
     <p class="disclaimer">
       Las imágenes de este catálogo son de referencia. El resultado real de cada impresión 3D
       puede variar en color, tamaño y acabado respecto a lo mostrado.
     </p>
     <p>© 2026 Catálogo de Impresiones 3D — Colección Halloween ·
-      <button type="button" id="btn-privacy" class="link-btn">Aviso de Privacidad</button>
+      <button type="button" id="btn-privacy" class="link-btn">Aviso de Privacidad</button> ·
+      <button type="button" id="btn-reveal-admin" class="link-btn">Admin</button>
     </p>
   </footer>
 
@@ -1869,6 +1904,9 @@
     document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
     document.getElementById('lightbox-overlay').addEventListener('click', function (e) {
       if (e.target.id === 'lightbox-overlay') closeLightbox();
+    });
+    document.getElementById('btn-reveal-admin').addEventListener('click', function () {
+      document.getElementById('admin-bar').classList.toggle('revealed');
     });
     document.getElementById('btn-privacy').addEventListener('click', openPrivacy);
     document.getElementById('btn-close-privacy').addEventListener('click', closePrivacy);
@@ -2116,7 +2154,7 @@
         el.removeAttribute('contenteditable');
       });
       var clonedBar = docClone.querySelector('#admin-bar');
-      if (clonedBar) clonedBar.classList.remove('logged-in');
+      if (clonedBar) clonedBar.classList.remove('logged-in', 'revealed');
       var clonedError = docClone.querySelector('#login-error');
       if (clonedError) clonedError.textContent = '';
       var clonedModal = docClone.querySelector('#add-modal-overlay');
